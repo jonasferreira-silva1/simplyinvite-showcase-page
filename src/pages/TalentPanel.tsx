@@ -1,7 +1,7 @@
-
 import React from "react";
 import UserPanelLayout from "@/components/UserPanelLayout";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import ProfileSummary from "@/components/panels/ProfileSummary";
 import ProjectCard from "@/components/panels/ProjectCard";
 import VideoPlayer from "@/components/panels/VideoPlayer";
