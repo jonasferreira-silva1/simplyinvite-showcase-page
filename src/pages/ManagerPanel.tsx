@@ -1,262 +1,240 @@
 
 import React from "react";
 import UserPanelLayout from "@/components/UserPanelLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import StatCard from "@/components/panels/StatCard";
-import ProjectCard from "@/components/panels/ProjectCard";
-import { Search, Calendar, Star, User } from "lucide-react";
+import { Star, Calendar, User, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ManagerPanel = () => {
   // Mock data
-  const talentData = [
+  const recentTalents = [
     {
       id: "1",
       name: "Ana Silva",
       age: 17,
       city: "São Paulo",
-      projectTitle: "App Educacional",
-      projectImage: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-      medal: "prata" as const,
-      category: "Desenvolvimento Mobile"
+      medal: "prata",
+      project: "App Educacional",
+      tags: ["UX/UI", "Frontend"]
     },
     {
       id: "2",
-      name: "Carlos Pereira",
-      age: 18,
-      city: "Rio de Janeiro",
-      projectTitle: "Projeto Social",
-      projectImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
-      medal: "ouro" as const,
-      category: "Impacto Social"
+      name: "Pedro Almeida",
+      age: 17,
+      city: "Belo Horizonte",
+      medal: "ouro",
+      project: "App de Reciclagem",
+      tags: ["Mobile", "React Native"]
     },
     {
       id: "3",
-      name: "Mariana Santos",
-      age: 16,
-      city: "Curitiba",
-      projectTitle: "Website Portfolio",
-      projectImage: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-      medal: "bronze" as const,
-      category: "Design"
-    },
-    {
-      id: "4",
-      name: "Lucas Oliveira",
+      name: "Julia Costa",
       age: 18,
-      city: "Belo Horizonte",
-      projectTitle: "App de Finanças",
-      projectImage: "https://images.unsplash.com/photo-1500673922987-e212871fec22",
-      medal: "prata" as const,
-      category: "Finanças"
+      city: "Salvador",
+      medal: "prata",
+      project: "Plataforma de Estudos",
+      tags: ["Educação", "Frontend"]
     }
   ];
 
-  const scheduledInterviews = [
+  const upcomingInterviews = [
     {
       id: "1",
-      name: "Carlos Pereira",
-      projectTitle: "Projeto Social",
-      date: "15/05/2023",
-      time: "14:30"
+      candidate: "Ana Silva",
+      date: "15/06/2023",
+      time: "14:30",
+      type: "online"
     },
     {
       id: "2",
-      name: "Mariana Santos",
-      projectTitle: "Website Portfolio",
-      date: "17/05/2023",
-      time: "10:00"
+      candidate: "Carlos Pereira",
+      date: "18/06/2023",
+      time: "10:00",
+      type: "presencial"
     }
   ];
 
-  const savedFavorites = [
-    {
-      id: "2",
-      name: "Carlos Pereira",
-      projectTitle: "Projeto Social",
-      medal: "ouro" as const
-    },
-    {
-      id: "4",
-      name: "Lucas Oliveira",
-      projectTitle: "App de Finanças",
-      medal: "prata" as const
+  const getMedalBadge = (medal: string) => {
+    switch (medal) {
+      case "ouro":
+        return <Badge className="bg-yellow-400 text-black">Ouro</Badge>;
+      case "prata":
+        return <Badge className="bg-gray-300 text-black">Prata</Badge>;
+      case "bronze":
+        return <Badge className="bg-amber-700 text-white">Bronze</Badge>;
+      default:
+        return <Badge variant="outline">-</Badge>;
     }
-  ];
-
-  // Handlers
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Search");
-  };
-
-  const handleScheduleInterview = (id: string) => {
-    console.log("Schedule interview", id);
-  };
-
-  const handleContactTalent = (id: string) => {
-    console.log("Contact talent", id);
   };
 
   return (
-    <UserPanelLayout userName="Gustavo Mendes" userType="manager">
+    <UserPanelLayout userName="Rodrigo Mendes" userType="manager">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight">Painel de Talentos</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Bem-vindo, Rodrigo!</h1>
+          <Button as={Link} to="/gestor/explorar">
+            <Search className="mr-2 h-4 w-4" />
+            Explorar talentos
+          </Button>
         </div>
-        
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+
+        <div className="grid gap-4 md:grid-cols-4">
           <StatCard 
-            title="Talentos disponíveis"
-            value="35"
+            title="Talentos Explorados"
+            value="48"
             icon={<User className="h-4 w-4" />}
           />
           <StatCard 
-            title="Entrevistas Agendadas"
-            value="2"
+            title="Talentos Favoritos"
+            value="12"
+            icon={<Star className="h-4 w-4" />}
+          />
+          <StatCard 
+            title="Entrevistas"
+            value="8"
+            description="Agendadas"
             icon={<Calendar className="h-4 w-4" />}
           />
           <StatCard 
-            title="Talentos Favoritos"
-            value="2"
-            icon={<Star className="h-4 w-4" />}
+            title="Novos Talentos"
+            value="21"
+            description="Em sua área"
           />
         </div>
-        
+
         <Card>
-          <CardHeader>
-            <CardTitle>Talentos Disponíveis</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Talentos em Destaque</CardTitle>
+            <Button variant="outline" size="sm" as={Link} to="/gestor/explorar">
+              Ver mais
+            </Button>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSearch} className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4">
-                <Input
-                  placeholder="Buscar por nome ou projeto"
-                  className="flex-1"
-                />
-                <Select>
-                  <SelectTrigger className="w-full md:w-[180px]">
-                    <SelectValue placeholder="Tipo de medalha" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas medalhas</SelectItem>
-                    <SelectItem value="gold">Ouro</SelectItem>
-                    <SelectItem value="silver">Prata</SelectItem>
-                    <SelectItem value="bronze">Bronze</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="w-full md:w-[180px]">
-                    <SelectValue placeholder="Categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas categorias</SelectItem>
-                    <SelectItem value="dev">Desenvolvimento</SelectItem>
-                    <SelectItem value="design">Design</SelectItem>
-                    <SelectItem value="social">Impacto Social</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button type="submit">
-                  <Search className="mr-2 h-4 w-4" />
-                  Buscar
-                </Button>
-              </div>
-            </form>
-            
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {talentData.map((talent) => (
-                <ProjectCard
-                  key={talent.id}
-                  title={`${talent.name}, ${talent.age} - ${talent.city}`}
-                  image={talent.projectImage}
-                  medalType={talent.medal}
-                  onViewDetails={() => handleContactTalent(talent.id)}
-                  userType="manager"
-                />
+            <div className="space-y-4">
+              {recentTalents.map((talent) => (
+                <div key={talent.id} className="border rounded-lg p-4">
+                  <div className="flex justify-between">
+                    <div>
+                      <h3 className="font-semibold">{talent.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {talent.age} anos • {talent.city}
+                      </p>
+                    </div>
+                    <div>{getMedalBadge(talent.medal)}</div>
+                  </div>
+                  <div className="mt-2">
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Projeto: </span>
+                      <span>{talent.project}</span>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {talent.tags.map((tag, i) => (
+                        <Badge key={i} variant="outline" className="text-xs">{tag}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="mt-3 flex justify-end">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      as={Link}
+                      to="/gestor/explorar"
+                    >
+                      Ver perfil
+                    </Button>
+                  </div>
+                </div>
               ))}
             </div>
           </CardContent>
         </Card>
-        
-        <div className="grid gap-6 lg:grid-cols-2">
+
+        <div className="grid gap-6 md:grid-cols-2">
           <Card>
-            <CardHeader>
-              <CardTitle>Entrevistas Agendadas</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Entrevistas Próximas</CardTitle>
+              <Button variant="outline" size="sm" as={Link} to="/gestor/entrevistas">
+                Ver agenda
+              </Button>
             </CardHeader>
             <CardContent>
-              {scheduledInterviews.length > 0 ? (
-                <div className="space-y-4">
-                  {scheduledInterviews.map((interview) => (
-                    <div key={interview.id} className="flex justify-between items-center border p-4 rounded-md">
-                      <div>
-                        <h3 className="font-medium">{interview.name}</h3>
-                        <p className="text-sm text-muted-foreground">{interview.projectTitle}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Calendar className="h-4 w-4" />
-                          <span className="text-sm">{interview.date} às {interview.time}</span>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Ver detalhes
-                      </Button>
-                    </div>
-                  ))}
+              {upcomingInterviews.map((interview) => (
+                <div 
+                  key={interview.id}
+                  className="mb-4 p-3 border rounded-md flex justify-between items-center"
+                >
+                  <div>
+                    <h3 className="font-medium">{interview.candidate}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {interview.date} às {interview.time}
+                    </p>
+                    <Badge 
+                      variant="outline" 
+                      className="mt-1"
+                    >
+                      {interview.type === "online" ? "Entrevista Online" : "Entrevista Presencial"}
+                    </Badge>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    as={Link}
+                    to="/gestor/entrevistas"
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Ver detalhes
+                  </Button>
                 </div>
-              ) : (
-                <div className="text-center py-10">
-                  <p className="text-muted-foreground">Nenhuma entrevista agendada.</p>
-                </div>
-              )}
+              ))}
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
-              <CardTitle>Favoritos</CardTitle>
+              <CardTitle>Atividade Recente</CardTitle>
             </CardHeader>
             <CardContent>
-              {savedFavorites.length > 0 ? (
-                <div className="space-y-4">
-                  {savedFavorites.map((favorite) => (
-                    <div key={favorite.id} className="flex justify-between items-center border p-4 rounded-md">
-                      <div>
-                        <h3 className="font-medium">{favorite.name}</h3>
-                        <p className="text-sm text-muted-foreground">{favorite.projectTitle}</p>
-                        <Badge className={`mt-1 ${
-                          favorite.medal === "ouro" 
-                            ? "bg-yellow-400 text-black" 
-                            : favorite.medal === "prata" 
-                            ? "bg-gray-300 text-black"
-                            : "bg-amber-700 text-white"
-                        }`}>
-                          Medalha {favorite.medal}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Button size="sm" onClick={() => handleScheduleInterview(favorite.id)}>
-                          Agendar
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => handleContactTalent(favorite.id)}>
-                          Contatar
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-10">
-                  <p className="text-muted-foreground">Nenhum favorito salvo.</p>
-                </div>
-              )}
+              <ul className="space-y-4">
+                <li className="flex gap-3">
+                  <Badge className="bg-green-100 text-green-800 h-6">✓</Badge>
+                  <div className="space-y-1">
+                    <p className="text-sm">
+                      Entrevista agendada com <span className="font-medium">Ana Silva</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">Há 2 horas</p>
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <Badge className="bg-blue-100 text-blue-800 h-6">★</Badge>
+                  <div className="space-y-1">
+                    <p className="text-sm">
+                      Você adicionou <span className="font-medium">Pedro Almeida</span> aos favoritos
+                    </p>
+                    <p className="text-xs text-muted-foreground">Há 3 horas</p>
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <Badge className="bg-amber-100 text-amber-800 h-6">👁</Badge>
+                  <div className="space-y-1">
+                    <p className="text-sm">
+                      Você visualizou 5 novos perfis
+                    </p>
+                    <p className="text-xs text-muted-foreground">Há 1 dia</p>
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <Badge className="bg-purple-100 text-purple-800 h-6">✉</Badge>
+                  <div className="space-y-1">
+                    <p className="text-sm">
+                      <span className="font-medium">Julia Costa</span> aceitou seu convite para entrevista
+                    </p>
+                    <p className="text-xs text-muted-foreground">Há 2 dias</p>
+                  </div>
+                </li>
+              </ul>
             </CardContent>
           </Card>
         </div>

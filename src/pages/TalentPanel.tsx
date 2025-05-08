@@ -1,3 +1,4 @@
+
 import React from "react";
 import UserPanelLayout from "@/components/UserPanelLayout";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,8 @@ import ProjectCard from "@/components/panels/ProjectCard";
 import VideoPlayer from "@/components/panels/VideoPlayer";
 import FeedbackList from "@/components/panels/FeedbackList";
 import StatCard from "@/components/panels/StatCard";
-import { Plus, FileVideo, Medal } from "lucide-react";
+import { Plus, FileVideo, Medal, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const TalentPanel = () => {
   // Mock data
@@ -74,7 +76,7 @@ const TalentPanel = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Bem-vindo(a), Ana!</h1>
-          <Button onClick={handleNewProject}>
+          <Button onClick={handleNewProject} as={Link} to="/jovem/submissoes">
             <Plus className="mr-2 h-4 w-4" />
             Enviar novo projeto
           </Button>
@@ -103,14 +105,20 @@ const TalentPanel = () => {
             icon={<Medal className="h-4 w-4" />}
           />
           <StatCard 
-            title="Convites de Entrevista"
-            value="1"
-            description="1 empresa quer te conhecer!"
+            title="Visualizações"
+            value="32"
+            description="Seu vídeo está sendo notado!"
+            icon={<Eye className="h-4 w-4" />}
           />
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-4">Seus Projetos</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Seus Projetos</h2>
+            <Button variant="outline" size="sm" as={Link} to="/jovem/submissoes">
+              Ver todos
+            </Button>
+          </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {mockProjects.map((project) => (
               <ProjectCard
@@ -128,17 +136,38 @@ const TalentPanel = () => {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <VideoPlayer
-            title="Seu Vídeo de Apresentação"
-            videoUrl="https://example.com/video.mp4"
-            onRecord={() => console.log("Record new video")}
-          />
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Feedbacks Recebidos</h2>
+              <Button variant="outline" size="sm" as={Link} to="/jovem/feedbacks">
+                Ver todos
+              </Button>
+            </div>
+            <FeedbackList feedbacks={mockFeedbacks.slice(0, 1)} />
+          </div>
 
-          <FeedbackList feedbacks={mockFeedbacks} />
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Seu Vídeo</h2>
+              <Button variant="outline" size="sm" as={Link} to="/jovem/submissoes">
+                Atualizar
+              </Button>
+            </div>
+            <VideoPlayer
+              title="Seu Vídeo de Apresentação"
+              videoUrl="https://example.com/video.mp4"
+              onRecord={() => console.log("Record new video")}
+            />
+          </div>
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-4">Convites Recebidos</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Convites Recebidos</h2>
+            <Button variant="outline" size="sm" as={Link} to="/jovem/convites">
+              Ver todos
+            </Button>
+          </div>
           {mockInvites.length > 0 ? (
             <div className="rounded-md border">
               <div className="p-4">
@@ -149,7 +178,7 @@ const TalentPanel = () => {
                       <p className="text-sm text-muted-foreground">{invite.date}</p>
                       <Badge className="mt-1">{invite.type}</Badge>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" as={Link} to="/jovem/convites">
                       Ver detalhes
                     </Button>
                   </div>

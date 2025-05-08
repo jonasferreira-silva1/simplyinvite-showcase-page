@@ -3,19 +3,11 @@ import React from "react";
 import UserPanelLayout from "@/components/UserPanelLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table";
+import { Link } from "react-router-dom";
 import StatCard from "@/components/panels/StatCard";
 import ProjectCard from "@/components/panels/ProjectCard";
-import { Search, Medal, User, Clock } from "lucide-react";
+import { Clock, Medal, User, Search } from "lucide-react";
 
 const EvaluationPanel = () => {
   // Mock data
@@ -65,29 +57,12 @@ const EvaluationPanel = () => {
       date: "08/05/2023",
       medal: "prata",
       forwardedToManager: true
-    },
-    {
-      id: "3",
-      projectTitle: "Blog de Viagens",
-      author: "Rafael Souza",
-      date: "02/05/2023",
-      medal: "bronze",
-      forwardedToManager: false
     }
   ];
 
   // Handlers
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Search");
-  };
-
   const handleEvaluate = (id: string) => {
     console.log("Evaluate", id);
-  };
-
-  const handleForwardToManager = (id: string) => {
-    console.log("Forward to manager", id);
   };
 
   const getMedalBadge = (medal: string) => {
@@ -107,7 +82,11 @@ const EvaluationPanel = () => {
     <UserPanelLayout userName="Roberto Gomes" userType="hr">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight">Painel de Avaliação</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Olá, Roberto!</h1>
+          <Button as={Link} to="/rh/projetos-pendentes">
+            <Search className="mr-2 h-4 w-4" />
+            Ver todos projetos
+          </Button>
         </div>
         
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -134,29 +113,26 @@ const EvaluationPanel = () => {
         </div>
         
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Projetos Pendentes para Avaliação</CardTitle>
+            <Button variant="outline" size="sm" as={Link} to="/rh/projetos-pendentes">
+              Ver todos
+            </Button>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSearch} className="flex items-center space-x-2 mb-6">
-              <Input
-                placeholder="Buscar por nome, cidade, categoria..."
-                className="flex-1"
-              />
-              <Button type="submit">
-                <Search className="mr-2 h-4 w-4" />
-                Buscar
-              </Button>
-            </form>
-            
+          <CardContent>            
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {pendingProjects.map((project) => (
+              {pendingProjects.slice(0, 3).map((project) => (
                 <ProjectCard
                   key={project.id}
                   title={`${project.title} - ${project.author}`}
                   image={project.image}
                   onViewDetails={() => handleEvaluate(project.id)}
                   userType="hr"
+                  additionalInfo={
+                    <div className="mt-2">
+                      <Badge variant="outline">{project.category}</Badge>
+                    </div>
+                  }
                 />
               ))}
             </div>
@@ -164,51 +140,42 @@ const EvaluationPanel = () => {
         </Card>
         
         <Card>
-          <CardHeader>
-            <CardTitle>Histórico de Avaliações</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Avaliações Recentes</CardTitle>
+            <Button variant="outline" size="sm" as={Link} to="/rh/historico">
+              Ver histórico completo
+            </Button>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Projeto</TableHead>
-                  <TableHead>Autor</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Medalha</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ação</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {evaluationHistory.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.projectTitle}</TableCell>
-                    <TableCell>{item.author}</TableCell>
-                    <TableCell>{item.date}</TableCell>
-                    <TableCell>{getMedalBadge(item.medal)}</TableCell>
-                    <TableCell>
+            <div className="space-y-4">
+              {evaluationHistory.slice(0, 2).map((item) => (
+                <div key={item.id} className="flex justify-between items-center p-4 border rounded-lg">
+                  <div>
+                    <h3 className="font-medium">{item.projectTitle}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {item.author} • {item.date}
+                    </p>
+                    <div className="mt-1 flex items-center gap-2">
+                      {getMedalBadge(item.medal)}
                       {item.forwardedToManager ? (
                         <Badge variant="outline" className="bg-green-50">Encaminhado</Badge>
                       ) : (
                         <Badge variant="outline">Pendente</Badge>
                       )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {!item.forwardedToManager && (
-                        <Button 
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleForwardToManager(item.id)}
-                        >
-                          <User className="mr-2 h-4 w-4" />
-                          Encaminhar
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    as={Link}
+                    to="/rh/historico"
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    Detalhes
+                  </Button>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

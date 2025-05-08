@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -15,7 +15,22 @@ import {
   SidebarGroup
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Home, Settings, User, LogOut } from "lucide-react";
+import { 
+  Bell, 
+  Home, 
+  Settings, 
+  User, 
+  LogOut, 
+  FileText, 
+  Medal, 
+  Clock, 
+  Inbox, 
+  Search, 
+  Star, 
+  Calendar, 
+  Building,
+  MessageSquare
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface UserPanelLayoutProps {
@@ -26,6 +41,8 @@ interface UserPanelLayoutProps {
 }
 
 const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelLayoutProps) => {
+  const location = useLocation();
+  
   const getUserInitials = () => {
     return userName
       .split(" ")
@@ -38,6 +55,127 @@ const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelL
     talent: "Jovem Talento",
     hr: "Profissional RH",
     manager: "Gestor"
+  };
+
+  // Get the base path for the user type
+  const getBasePath = () => {
+    switch(userType) {
+      case "talent": return "/jovem";
+      case "hr": return "/rh";
+      case "manager": return "/gestor";
+      default: return "/";
+    }
+  };
+
+  const basePath = getBasePath();
+
+  // Define menu items based on user type
+  const getMenuItems = () => {
+    switch(userType) {
+      case "talent":
+        return [
+          { 
+            path: "/jovem", 
+            label: "Painel Principal", 
+            icon: <Home className="h-4 w-4" /> 
+          },
+          { 
+            path: "/jovem/perfil", 
+            label: "Meu Perfil", 
+            icon: <User className="h-4 w-4" /> 
+          },
+          { 
+            path: "/jovem/submissoes", 
+            label: "Meus Envios", 
+            icon: <FileText className="h-4 w-4" /> 
+          },
+          { 
+            path: "/jovem/feedbacks", 
+            label: "Feedbacks", 
+            icon: <Medal className="h-4 w-4" /> 
+          },
+          { 
+            path: "/jovem/evolucao", 
+            label: "Minha Evolução", 
+            icon: <Clock className="h-4 w-4" /> 
+          },
+          { 
+            path: "/jovem/convites", 
+            label: "Convites", 
+            icon: <Inbox className="h-4 w-4" /> 
+          }
+        ];
+      case "hr":
+        return [
+          { 
+            path: "/rh", 
+            label: "Painel Principal", 
+            icon: <Home className="h-4 w-4" /> 
+          },
+          { 
+            path: "/rh/projetos-pendentes", 
+            label: "Projetos para Avaliar", 
+            icon: <FileText className="h-4 w-4" /> 
+          },
+          { 
+            path: "/rh/historico", 
+            label: "Histórico de Avaliações", 
+            icon: <Clock className="h-4 w-4" /> 
+          },
+          { 
+            path: "/rh/mensagens", 
+            label: "Mensagens", 
+            icon: <MessageSquare className="h-4 w-4" /> 
+          },
+          { 
+            path: "/rh/perfil", 
+            label: "Perfil da Empresa", 
+            icon: <Building className="h-4 w-4" /> 
+          },
+          { 
+            path: "/rh/relatorios", 
+            label: "Relatórios", 
+            icon: <FileText className="h-4 w-4" /> 
+          }
+        ];
+      case "manager":
+        return [
+          { 
+            path: "/gestor", 
+            label: "Painel Principal", 
+            icon: <Home className="h-4 w-4" /> 
+          },
+          { 
+            path: "/gestor/explorar", 
+            label: "Explorar Talentos", 
+            icon: <Search className="h-4 w-4" /> 
+          },
+          { 
+            path: "/gestor/favoritos", 
+            label: "Favoritos", 
+            icon: <Star className="h-4 w-4" /> 
+          },
+          { 
+            path: "/gestor/entrevistas", 
+            label: "Entrevistas", 
+            icon: <Calendar className="h-4 w-4" /> 
+          },
+          { 
+            path: "/gestor/empresa", 
+            label: "Minha Empresa", 
+            icon: <Building className="h-4 w-4" /> 
+          }
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const menuItems = getMenuItems();
+
+  // Check if a menu item is active
+  const isActive = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -60,28 +198,29 @@ const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelL
           <SidebarContent className="py-2">
             <SidebarGroup>
               <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild tooltip="Painel">
-                    <Link to={`/${userType === "talent" ? "jovem" : userType === "hr" ? "rh" : "gestor"}`}>
-                      <Home />
-                      <span>Painel Principal</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild tooltip="Perfil">
-                    <Link to="#">
-                      <User />
-                      <span>Meu Perfil</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                
+                {menuItems.map((item) => (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton 
+                      asChild 
+                      tooltip={item.label}
+                      isActive={isActive(item.path)}
+                    >
+                      <Link to={item.path}>
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroup>
+            
+            <SidebarGroup>
+              <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Notificações">
                     <Link to="#">
-                      <Bell />
+                      <Bell className="h-4 w-4" />
                       <span>Notificações</span>
                     </Link>
                   </SidebarMenuButton>
@@ -90,7 +229,7 @@ const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelL
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Configurações">
                     <Link to="#">
-                      <Settings />
+                      <Settings className="h-4 w-4" />
                       <span>Configurações</span>
                     </Link>
                   </SidebarMenuButton>
