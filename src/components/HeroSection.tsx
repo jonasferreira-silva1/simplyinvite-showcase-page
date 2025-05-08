@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -28,14 +29,14 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-si-accent hover:bg-si-accent/90 text-white px-8 py-6 text-lg">
-              Sou Jovem – Quero Me Apresentar
+            <Button className="bg-si-accent hover:bg-si-accent/90 text-white px-8 py-6 text-lg" asChild>
+              <Link to="/jovem-auth">Sou Jovem – Entrar</Link>
             </Button>
-            <Button className="bg-white text-si-blue hover:bg-gray-100 px-8 py-6 text-lg">
-              Sou RH – Avaliar Projetos
+            <Button className="bg-white text-si-blue hover:bg-gray-100 px-8 py-6 text-lg" asChild>
+              <Link to="/rh-auth">Sou RH – Entrar</Link>
             </Button>
-            <Button className="bg-si-blue hover:bg-si-blue/80 text-white border border-white px-8 py-6 text-lg">
-              Sou Chefe – Buscar Talentos
+            <Button className="bg-si-blue hover:bg-si-blue/80 text-white border border-white px-8 py-6 text-lg" asChild>
+              <Link to="/gestor-auth">Sou Chefe – Entrar</Link>
             </Button>
           </div>
         </div>

@@ -9,6 +9,9 @@ import NotFound from "./pages/NotFound";
 import TalentPanel from "./pages/TalentPanel";
 import EvaluationPanel from "./pages/EvaluationPanel";
 import ManagerPanel from "./pages/ManagerPanel";
+import TalentAuth from "./pages/TalentAuth";
+import HRAuth from "./pages/HRAuth";
+import ManagerAuth from "./pages/ManagerAuth";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +23,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/jovem-auth" element={<TalentAuth />} />
+          <Route path="/rh-auth" element={<HRAuth />} />
+          <Route path="/gestor-auth" element={<ManagerAuth />} />
           <Route path="/jovem" element={<TalentPanel />} />
           <Route path="/rh" element={<EvaluationPanel />} />
           <Route path="/gestor" element={<ManagerPanel />} />
