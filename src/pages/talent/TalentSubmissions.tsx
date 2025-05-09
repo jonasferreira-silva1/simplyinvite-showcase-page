@@ -93,14 +93,6 @@ const TalentSubmissions = () => {
                   onViewDetails={() => handleViewDetails(project.id)}
                   onViewFeedback={() => handleViewFeedback(project.id)}
                   userType="talent"
-                  additionalInfo={
-                    <div className="mt-2 flex justify-between items-center">
-                      <Badge variant={project.status === "avaliado" ? "default" : "outline"}>
-                        {project.status}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">{project.date}</span>
-                    </div>
-                  }
                 />
               ))}
             </div>
