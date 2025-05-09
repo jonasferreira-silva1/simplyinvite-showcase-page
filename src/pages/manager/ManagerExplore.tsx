@@ -138,7 +138,7 @@ const ManagerExplore = () => {
                     <SelectValue placeholder="Medalha" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas</SelectItem>
+                    <SelectItem value="all">Todas</SelectItem>
                     <SelectItem value="ouro">Ouro</SelectItem>
                     <SelectItem value="prata">Prata</SelectItem>
                     <SelectItem value="bronze">Bronze</SelectItem>
@@ -155,7 +155,7 @@ const ManagerExplore = () => {
                     <SelectValue placeholder="Categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas</SelectItem>
+                    <SelectItem value="all">Todas</SelectItem>
                     <SelectItem value="Design">Design</SelectItem>
                     <SelectItem value="Desenvolvimento">Desenvolvimento</SelectItem>
                     <SelectItem value="Impacto Social">Impacto Social</SelectItem>
@@ -173,7 +173,7 @@ const ManagerExplore = () => {
                     <SelectValue placeholder="Localização" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas</SelectItem>
+                    <SelectItem value="all">Todas</SelectItem>
                     <SelectItem value="São Paulo">São Paulo</SelectItem>
                     <SelectItem value="Rio de Janeiro">Rio de Janeiro</SelectItem>
                     <SelectItem value="Curitiba">Curitiba</SelectItem>
