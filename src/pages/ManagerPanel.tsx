@@ -1,4 +1,3 @@
-
 import React from "react";
 import UserPanelLayout from "@/components/UserPanelLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,10 +74,12 @@ const ManagerPanel = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Bem-vindo, Rodrigo!</h1>
-          <Button as={Link} to="/gestor/explorar">
-            <Search className="mr-2 h-4 w-4" />
-            Explorar talentos
-          </Button>
+          <Link to="/gestor/explorar">
+            <Button>
+              <Search className="mr-2 h-4 w-4" />
+              Explorar talentos
+            </Button>
+          </Link>
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
@@ -108,9 +109,11 @@ const ManagerPanel = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Talentos em Destaque</CardTitle>
-            <Button variant="outline" size="sm" as={Link} to="/gestor/explorar">
-              Ver mais
-            </Button>
+            <Link to="/gestor/explorar">
+              <Button variant="outline" size="sm">
+                Ver mais
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -156,9 +159,11 @@ const ManagerPanel = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Entrevistas Próximas</CardTitle>
-              <Button variant="outline" size="sm" as={Link} to="/gestor/entrevistas">
-                Ver agenda
-              </Button>
+              <Link to="/gestor/entrevistas">
+                <Button variant="outline" size="sm">
+                  Ver agenda
+                </Button>
+              </Link>
             </CardHeader>
             <CardContent>
               {upcomingInterviews.map((interview) => (

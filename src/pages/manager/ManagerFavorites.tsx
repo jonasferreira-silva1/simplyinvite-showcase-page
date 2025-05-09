@@ -122,7 +122,7 @@ const ManagerFavorites = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="avaliando">Avaliando</SelectItem>
                 <SelectItem value="em contato">Em Contato</SelectItem>
                 <SelectItem value="convidado">Convidado</SelectItem>
