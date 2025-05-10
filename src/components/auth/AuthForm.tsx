@@ -1,6 +1,8 @@
 
 import React from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { 
   Form, 
   FormControl, 
@@ -19,8 +21,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { ProfileType } from "@/lib/supabase";
+import { useToast } from "@/components/ui/use-toast";
 
-// Types for the different user profiles
+// Tipos para os diferentes perfis de usuário
 type CommonFields = {
   fullName: string;
   email: string;
@@ -43,26 +48,103 @@ type ManagerFields = CommonFields & {
   talentSearchArea: string;
 };
 
-type UserType = "talent" | "hr" | "manager";
-
 type AuthFormProps = {
-  userType: UserType;
+  userType: ProfileType;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
+  onSubmit?: (data: any) => void;
 };
+
+// Esquemas de validação
+const loginSchema = z.object({
+  email: z.string().email({ message: "Email inválido" }),
+  password: z.string().min(6, { message: "Senha deve ter pelo menos 6 caracteres" }),
+});
+
+const registerCommonSchema = loginSchema.extend({
+  fullName: z.string().min(3, { message: "Nome deve ter pelo menos 3 caracteres" }),
+});
+
+const talentSchema = registerCommonSchema.extend({
+  interestArea: z.string().min(2, { message: "Informe sua área de interesse" }),
+  portfolioLink: z.string().optional(),
+});
+
+const hrSchema = registerCommonSchema.extend({
+  company: z.string().min(2, { message: "Informe o nome da empresa" }),
+  cnpj: z.string().min(14, { message: "CNPJ inválido" }),
+});
+
+const managerSchema = registerCommonSchema.extend({
+  company: z.string().min(2, { message: "Informe o nome da empresa" }),
+  position: z.string().min(2, { message: "Informe seu cargo" }),
+  talentSearchArea: z.string().min(2, { message: "Informe a área de busca de talentos" }),
+});
 
 const AuthForm = ({ userType, isOpen, onClose, onSubmit }: AuthFormProps) => {
   const [isLogin, setIsLogin] = React.useState(true);
+  const { signIn, signUp } = useAuth();
+  const { toast } = useToast();
   
-  // Form setup with react-hook-form
-  const form = useForm();
+  // Define o esquema baseado no tipo de usuário e se é login ou registro
+  const getSchema = () => {
+    if (isLogin) {
+      return loginSchema;
+    }
+    
+    switch (userType) {
+      case "talent":
+        return talentSchema;
+      case "hr":
+        return hrSchema;
+      case "manager":
+        return managerSchema;
+      default:
+        return loginSchema;
+    }
+  };
   
-  const handleSubmit = (data: any) => {
-    onSubmit(data);
+  // Form setup com react-hook-form e zod
+  const form = useForm({
+    resolver: zodResolver(getSchema()),
+    defaultValues: {
+      email: "",
+      password: "",
+      fullName: "",
+      interestArea: "",
+      portfolioLink: "",
+      company: "",
+      cnpj: "",
+      position: "",
+      talentSearchArea: "",
+    },
+  });
+  
+  const handleSubmit = async (data: any) => {
+    try {
+      if (isLogin) {
+        const { error } = await signIn(data.email, data.password, userType);
+        if (!error) {
+          onClose();
+          if (onSubmit) onSubmit(data);
+        }
+      } else {
+        const { error } = await signUp(data.email, data.password, userType, data);
+        if (!error) {
+          onClose();
+          if (onSubmit) onSubmit(data);
+        }
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: error.message || "Ocorreu um erro. Tente novamente."
+      });
+    }
   };
 
-  // Title and description based on user type
+  // Título e descrição baseados no tipo de usuário
   const getTitleAndDescription = () => {
     switch (userType) {
       case "talent":
@@ -101,7 +183,7 @@ const AuthForm = ({ userType, isOpen, onClose, onSubmit }: AuthFormProps) => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {/* Common fields for all user types */}
+            {/* Campos comuns para todos os tipos de usuário */}
             {!isLogin && (
               <FormField
                 control={form.control}
@@ -146,7 +228,7 @@ const AuthForm = ({ userType, isOpen, onClose, onSubmit }: AuthFormProps) => {
               )}
             />
 
-            {/* User-type specific fields (only shown during registration) */}
+            {/* Campos específicos para cada tipo de usuário (apenas mostrados durante o registro) */}
             {!isLogin && userType === "talent" && (
               <>
                 <FormField

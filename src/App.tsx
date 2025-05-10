@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import TalentPanel from "./pages/TalentPanel";
@@ -43,40 +44,42 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            
-            {/* Auth Routes */}
-            <Route path="/jovem-auth" element={<TalentAuth />} />
-            <Route path="/rh-auth" element={<HRAuth />} />
-            <Route path="/gestor-auth" element={<ManagerAuth />} />
-            
-            {/* Talent Panel Routes */}
-            <Route path="/jovem" element={<TalentPanel />} />
-            <Route path="/jovem/perfil" element={<TalentProfile />} />
-            <Route path="/jovem/submissoes" element={<TalentSubmissions />} />
-            <Route path="/jovem/feedbacks" element={<TalentFeedback />} />
-            <Route path="/jovem/evolucao" element={<TalentProgress />} />
-            <Route path="/jovem/convites" element={<TalentInvitations />} />
-            
-            {/* HR Panel Routes */}
-            <Route path="/rh" element={<EvaluationPanel />} />
-            <Route path="/rh/projetos-pendentes" element={<HRPendingProjects />} />
-            <Route path="/rh/historico" element={<HREvaluationHistory />} />
-            <Route path="/rh/mensagens" element={<HRMessages />} />
-            <Route path="/rh/perfil" element={<HRProfile />} />
-            <Route path="/rh/relatorios" element={<HRReports />} />
-            
-            {/* Manager Panel Routes */}
-            <Route path="/gestor" element={<ManagerPanel />} />
-            <Route path="/gestor/explorar" element={<ManagerExplore />} />
-            <Route path="/gestor/favoritos" element={<ManagerFavorites />} />
-            <Route path="/gestor/entrevistas" element={<ManagerInterviews />} />
-            <Route path="/gestor/empresa" element={<ManagerCompany />} />
-            
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              
+              {/* Auth Routes */}
+              <Route path="/jovem-auth" element={<TalentAuth />} />
+              <Route path="/rh-auth" element={<HRAuth />} />
+              <Route path="/gestor-auth" element={<ManagerAuth />} />
+              
+              {/* Talent Panel Routes */}
+              <Route path="/jovem" element={<TalentPanel />} />
+              <Route path="/jovem/perfil" element={<TalentProfile />} />
+              <Route path="/jovem/submissoes" element={<TalentSubmissions />} />
+              <Route path="/jovem/feedbacks" element={<TalentFeedback />} />
+              <Route path="/jovem/evolucao" element={<TalentProgress />} />
+              <Route path="/jovem/convites" element={<TalentInvitations />} />
+              
+              {/* HR Panel Routes */}
+              <Route path="/rh" element={<EvaluationPanel />} />
+              <Route path="/rh/projetos-pendentes" element={<HRPendingProjects />} />
+              <Route path="/rh/historico" element={<HREvaluationHistory />} />
+              <Route path="/rh/mensagens" element={<HRMessages />} />
+              <Route path="/rh/perfil" element={<HRProfile />} />
+              <Route path="/rh/relatorios" element={<HRReports />} />
+              
+              {/* Manager Panel Routes */}
+              <Route path="/gestor" element={<ManagerPanel />} />
+              <Route path="/gestor/explorar" element={<ManagerExplore />} />
+              <Route path="/gestor/favoritos" element={<ManagerFavorites />} />
+              <Route path="/gestor/entrevistas" element={<ManagerInterviews />} />
+              <Route path="/gestor/empresa" element={<ManagerCompany />} />
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

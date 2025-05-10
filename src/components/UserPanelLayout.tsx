@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   SidebarProvider, 
@@ -32,23 +32,45 @@ import {
   MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { ProfileType } from "@/lib/supabase";
 
 interface UserPanelLayoutProps {
   children: React.ReactNode;
-  userName: string;
-  userType: "talent" | "hr" | "manager";
+  userName?: string;
+  userType: ProfileType;
   userImage?: string;
 }
 
-const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelLayoutProps) => {
+const UserPanelLayout = ({ children, userName: providedUserName, userType, userImage }: UserPanelLayoutProps) => {
   const location = useLocation();
+  const { user, profileType, getProfile, signOut } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>(providedUserName || "");
+  
+  useEffect(() => {
+    const loadProfileData = async () => {
+      if (user) {
+        const { data } = await getProfile();
+        if (data && data.full_name) {
+          setUserName(data.full_name);
+        }
+        setLoading(false);
+      }
+    };
+    
+    loadProfileData();
+  }, [user, getProfile]);
   
   const getUserInitials = () => {
     return userName
-      .split(" ")
-      .map(n => n[0])
-      .join("")
-      .toUpperCase();
+      ? userName
+          .split(" ")
+          .map(n => n[0])
+          .join("")
+          .toUpperCase()
+      : "U";
   };
 
   const userTypeLabel = {
@@ -178,7 +200,7 @@ const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelL
     return location.pathname === path;
   };
 
-  return (
+  const content = (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <Sidebar>
@@ -189,7 +211,7 @@ const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelL
                 <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
               <div className="text-center">
-                <p className="text-sm font-medium">{userName}</p>
+                <p className="text-sm font-medium">{userName || "Carregando..."}</p>
                 <p className="text-xs text-muted-foreground">{userTypeLabel[userType]}</p>
               </div>
             </div>
@@ -241,11 +263,13 @@ const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelL
           <SidebarFooter className="py-2">
             <SidebarSeparator />
             <div className="p-2">
-              <Button variant="outline" className="w-full justify-start" asChild>
-                <Link to="/">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sair</span>
-                </Link>
+              <Button 
+                variant="outline" 
+                className="w-full justify-start" 
+                onClick={signOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sair</span>
               </Button>
             </div>
           </SidebarFooter>
@@ -262,11 +286,23 @@ const UserPanelLayout = ({ children, userName, userType, userImage }: UserPanelL
             </Button>
           </div>
           <main className="flex-1 p-4 md:p-6 lg:p-8">
-            {children}
+            {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-si-accent"></div>
+              </div>
+            ) : (
+              children
+            )}
           </main>
         </div>
       </div>
     </SidebarProvider>
+  );
+
+  return (
+    <ProtectedRoute requiredProfileType={userType}>
+      {content}
+    </ProtectedRoute>
   );
 };
 

@@ -12,20 +12,12 @@ const ManagerAuth = () => {
     navigate('/');
   };
 
-  const handleSubmit = (data: any) => {
-    console.log("Manager auth data:", data);
-    // Here you would handle authentication logic
-    // For now, just navigate to the manager panel
-    navigate('/gestor');
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100">
       <AuthForm
         userType="manager"
         isOpen={isAuthOpen}
         onClose={handleClose}
-        onSubmit={handleSubmit}
       />
     </div>
   );
