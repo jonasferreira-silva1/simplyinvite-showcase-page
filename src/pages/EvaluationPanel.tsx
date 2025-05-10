@@ -83,10 +83,12 @@ const EvaluationPanel = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Olá, Roberto!</h1>
-          <Button as={Link} to="/rh/projetos-pendentes">
-            <Search className="mr-2 h-4 w-4" />
-            Ver todos projetos
-          </Button>
+          <Link to="/rh/projetos-pendentes">
+            <Button>
+              <Search className="mr-2 h-4 w-4" />
+              Ver todos projetos
+            </Button>
+          </Link>
         </div>
         
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -115,9 +117,11 @@ const EvaluationPanel = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Projetos Pendentes para Avaliação</CardTitle>
-            <Button variant="outline" size="sm" as={Link} to="/rh/projetos-pendentes">
-              Ver todos
-            </Button>
+            <Link to="/rh/projetos-pendentes">
+              <Button variant="outline" size="sm">
+                Ver todos
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>            
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -128,11 +132,6 @@ const EvaluationPanel = () => {
                   image={project.image}
                   onViewDetails={() => handleEvaluate(project.id)}
                   userType="hr"
-                  additionalInfo={
-                    <div className="mt-2">
-                      <Badge variant="outline">{project.category}</Badge>
-                    </div>
-                  }
                 />
               ))}
             </div>
@@ -142,9 +141,11 @@ const EvaluationPanel = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Avaliações Recentes</CardTitle>
-            <Button variant="outline" size="sm" as={Link} to="/rh/historico">
-              Ver histórico completo
-            </Button>
+            <Link to="/rh/historico">
+              <Button variant="outline" size="sm">
+                Ver histórico completo
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -164,15 +165,12 @@ const EvaluationPanel = () => {
                       )}
                     </div>
                   </div>
-                  <Button 
-                    variant="outline"
-                    size="sm"
-                    as={Link}
-                    to="/rh/historico"
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    Detalhes
-                  </Button>
+                  <Link to="/rh/historico">
+                    <Button variant="outline" size="sm">
+                      <User className="mr-2 h-4 w-4" />
+                      Detalhes
+                    </Button>
+                  </Link>
                 </div>
               ))}
             </div>

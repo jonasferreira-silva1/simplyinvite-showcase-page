@@ -1,3 +1,4 @@
+
 import React from "react";
 import UserPanelLayout from "@/components/UserPanelLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -140,14 +141,11 @@ const ManagerPanel = () => {
                     </div>
                   </div>
                   <div className="mt-3 flex justify-end">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      as={Link}
-                      to="/gestor/explorar"
-                    >
-                      Ver perfil
-                    </Button>
+                    <Link to="/gestor/explorar">
+                      <Button variant="outline" size="sm">
+                        Ver perfil
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -183,15 +181,12 @@ const ManagerPanel = () => {
                       {interview.type === "online" ? "Entrevista Online" : "Entrevista Presencial"}
                     </Badge>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    as={Link}
-                    to="/gestor/entrevistas"
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Ver detalhes
-                  </Button>
+                  <Link to="/gestor/entrevistas">
+                    <Button variant="outline" size="sm">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Ver detalhes
+                    </Button>
+                  </Link>
                 </div>
               ))}
             </CardContent>

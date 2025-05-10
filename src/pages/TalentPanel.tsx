@@ -76,10 +76,12 @@ const TalentPanel = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Bem-vindo(a), Ana!</h1>
-          <Button onClick={handleNewProject} as={Link} to="/jovem/submissoes">
-            <Plus className="mr-2 h-4 w-4" />
-            Enviar novo projeto
-          </Button>
+          <Link to="/jovem/submissoes">
+            <Button onClick={handleNewProject}>
+              <Plus className="mr-2 h-4 w-4" />
+              Enviar novo projeto
+            </Button>
+          </Link>
         </div>
 
         <ProfileSummary 
@@ -115,9 +117,11 @@ const TalentPanel = () => {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Seus Projetos</h2>
-            <Button variant="outline" size="sm" as={Link} to="/jovem/submissoes">
-              Ver todos
-            </Button>
+            <Link to="/jovem/submissoes">
+              <Button variant="outline" size="sm">
+                Ver todos
+              </Button>
+            </Link>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {mockProjects.map((project) => (
@@ -139,9 +143,11 @@ const TalentPanel = () => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Feedbacks Recebidos</h2>
-              <Button variant="outline" size="sm" as={Link} to="/jovem/feedbacks">
-                Ver todos
-              </Button>
+              <Link to="/jovem/feedbacks">
+                <Button variant="outline" size="sm">
+                  Ver todos
+                </Button>
+              </Link>
             </div>
             <FeedbackList feedbacks={mockFeedbacks.slice(0, 1)} />
           </div>
@@ -149,9 +155,11 @@ const TalentPanel = () => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Seu Vídeo</h2>
-              <Button variant="outline" size="sm" as={Link} to="/jovem/submissoes">
-                Atualizar
-              </Button>
+              <Link to="/jovem/submissoes">
+                <Button variant="outline" size="sm">
+                  Atualizar
+                </Button>
+              </Link>
             </div>
             <VideoPlayer
               title="Seu Vídeo de Apresentação"
@@ -164,9 +172,11 @@ const TalentPanel = () => {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Convites Recebidos</h2>
-            <Button variant="outline" size="sm" as={Link} to="/jovem/convites">
-              Ver todos
-            </Button>
+            <Link to="/jovem/convites">
+              <Button variant="outline" size="sm">
+                Ver todos
+              </Button>
+            </Link>
           </div>
           {mockInvites.length > 0 ? (
             <div className="rounded-md border">
@@ -178,9 +188,11 @@ const TalentPanel = () => {
                       <p className="text-sm text-muted-foreground">{invite.date}</p>
                       <Badge className="mt-1">{invite.type}</Badge>
                     </div>
-                    <Button variant="outline" size="sm" as={Link} to="/jovem/convites">
-                      Ver detalhes
-                    </Button>
+                    <Link to="/jovem/convites">
+                      <Button variant="outline" size="sm">
+                        Ver detalhes
+                      </Button>
+                    </Link>
                   </div>
                 ))}
               </div>
