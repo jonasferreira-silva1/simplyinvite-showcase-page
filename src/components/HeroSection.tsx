@@ -1,9 +1,16 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import ProfileSelector from "@/components/auth/ProfileSelector";
 
 const HeroSection = () => {
+  const [isProfileSelectorOpen, setIsProfileSelectorOpen] = useState(false);
+  
+  const handleOpenProfileSelector = () => {
+    setIsProfileSelectorOpen(true);
+  };
+
   return (
     <div className="relative min-h-screen flex items-center">
       {/* Background image with overlay */}
@@ -29,18 +36,18 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-si-accent hover:bg-si-accent/90 text-white px-8 py-6 text-lg" asChild>
-              <Link to="/jovem-auth">Sou Jovem – Entrar</Link>
-            </Button>
-            <Button className="bg-white text-si-blue hover:bg-gray-100 px-8 py-6 text-lg" asChild>
-              <Link to="/rh-auth">Sou RH – Entrar</Link>
-            </Button>
-            <Button className="bg-si-blue hover:bg-si-blue/80 text-white border border-white px-8 py-6 text-lg" asChild>
-              <Link to="/gestor-auth">Sou Chefe – Entrar</Link>
+            <Button className="bg-si-accent hover:bg-si-accent/90 text-white px-8 py-6 text-lg" onClick={handleOpenProfileSelector}>
+              Começar Agora
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Profile Selector Modal */}
+      <ProfileSelector 
+        isOpen={isProfileSelectorOpen} 
+        onOpenChange={setIsProfileSelectorOpen} 
+      />
     </div>
   );
 };
