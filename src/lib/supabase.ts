@@ -1,11 +1,13 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// In development mode, we can use these default values or you can replace them with your actual Supabase URL and anon key
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project-url.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key-from-supabase';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase URL and Anon Key must be defined');
+// For production, we still want to enforce the environment variables
+if (import.meta.env.PROD && (!supabaseUrl || !supabaseAnonKey)) {
+  throw new Error('Supabase URL and Anon Key must be defined in production environment');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
