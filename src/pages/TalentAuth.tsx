@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AuthForm from "@/components/auth/AuthForm";
 import DevModeLogin from "@/components/auth/DevModeLogin";
 import { isSupabaseConfigured } from "@/backend/database/supabase";
+import InfoHeader from "@/components/InfoHeader";
 
 const TalentAuth = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(true);
@@ -16,14 +17,17 @@ const TalentAuth = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-100 p-4">
-      {showDevMode && <DevModeLogin />}
-      
-      <AuthForm
-        userType="talent"
-        isOpen={isAuthOpen}
-        onClose={handleClose}
-      />
+    <div className="min-h-screen flex flex-col bg-slate-100">
+      {showDevMode && <InfoHeader />}
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
+        {showDevMode && <DevModeLogin />}
+        
+        <AuthForm
+          userType="talent"
+          isOpen={isAuthOpen}
+          onClose={handleClose}
+        />
+      </div>
     </div>
   );
 };
