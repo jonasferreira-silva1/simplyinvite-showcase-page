@@ -3,17 +3,7 @@
 
 ## Informações do Projeto
 
-**URL**: https://lovable.dev/projects/0f2240e2-a93e-4140-98b9-b1de4eca2e73
-
 ## Como usar este projeto
-
-Existem várias maneiras de editar e executar esta aplicação:
-
-### Usar o Lovable
-
-Simplesmente visite [SimplyInvite no Lovable](https://lovable.dev/projects/0f2240e2-a93e-4140-98b9-b1de4eca2e73) e comece a usar.
-
-As alterações feitas via Lovable serão automaticamente sincronizadas com este repositório.
 
 ### Usar sua IDE preferida
 
