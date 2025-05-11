@@ -2,10 +2,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "@/components/auth/AuthForm";
+import DevModeLogin from "@/components/auth/DevModeLogin";
+import { isSupabaseConfigured } from "@/lib/supabase";
 
 const ManagerAuth = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(true);
   const navigate = useNavigate();
+  const showDevMode = import.meta.env.DEV && !isSupabaseConfigured();
 
   const handleClose = () => {
     setIsAuthOpen(false);
@@ -13,7 +16,9 @@ const ManagerAuth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-100 p-4">
+      {showDevMode && <DevModeLogin />}
+      
       <AuthForm
         userType="manager"
         isOpen={isAuthOpen}

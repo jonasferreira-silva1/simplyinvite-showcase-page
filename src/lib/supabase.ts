@@ -59,3 +59,25 @@ export interface ManagerProfile {
   avatar_url?: string;
   created_at: string;
 }
+
+// Função auxiliar para verificar se o ambiente de autenticação está configurado
+export const isSupabaseConfigured = (): boolean => {
+  return !!supabaseUrl && !!supabaseAnonKey && 
+    supabaseUrl !== 'https://your-project-url.supabase.co' && 
+    supabaseAnonKey !== 'your-anon-key-from-supabase';
+};
+
+// Função auxiliar para criar usuários de teste (para uso apenas em desenvolvimento)
+export const setupDevelopmentUsers = async (): Promise<void> => {
+  if (import.meta.env.DEV && !isSupabaseConfigured()) {
+    console.warn('⚠️ Usando modo de desenvolvimento com usuários de teste. NÃO use em produção!');
+    console.info('📝 Usuários de teste disponíveis:');
+    console.info('   - Talento: jovem@example.com / senha123');
+    console.info('   - RH: rh@example.com / senha123');
+    console.info('   - Gestor: gestor@example.com / senha123');
+    
+    // Simulação do processo de login sem backend real
+    // Essa função só deve ser usada em ambiente de desenvolvimento!
+    return;
+  }
+};

@@ -1,7 +1,6 @@
-
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase, ProfileType, AuthUser } from '@/lib/supabase';
+import { supabase, ProfileType, AuthUser, isSupabaseConfigured } from '@/lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -14,6 +13,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, profileType: ProfileType, userData: any) => Promise<{ error: any | null }>;
   signOut: () => Promise<void>;
   getProfile: () => Promise<any>;
+  isDevMode: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isDevMode = import.meta.env.DEV && !isSupabaseConfigured();
 
   useEffect(() => {
     // Inicializa o estado da autenticação
@@ -103,6 +104,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Função de login
   const signIn = async (email: string, password: string, profileType: ProfileType) => {
     try {
+      // Modo de desenvolvimento (simulação de autenticação)
+      if (isDevMode) {
+        console.log("🔧 Usando modo de desenvolvimento para autenticação");
+        
+        // Simula um usuário autenticado
+        const mockUserId = `dev-${profileType}-${Date.now()}`;
+        const mockUser = {
+          id: mockUserId,
+          email: email,
+          profile_type: profileType
+        };
+        
+        setUser(mockUser);
+        setProfileType(profileType);
+        
+        // Redireciona para a página apropriada
+        switch(profileType) {
+          case 'talent':
+            navigate('/jovem');
+            break;
+          case 'hr':
+            navigate('/rh');
+            break;
+          case 'manager':
+            navigate('/gestor');
+            break;
+        }
+        
+        return { error: null };
+      }
+      
+      // Login real com Supabase
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
@@ -161,7 +194,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Função de cadastro
   const signUp = async (email: string, password: string, profileType: ProfileType, userData: any) => {
     try {
-      // Registra o usuário no Supabase Auth
+      // Modo de desenvolvimento (simulação de cadastro)
+      if (isDevMode) {
+        console.log("🔧 Usando modo de desenvolvimento para cadastro");
+        
+        // Simula um usuário cadastrado
+        const mockUserId = `dev-${profileType}-${Date.now()}`;
+        const mockUser = {
+          id: mockUserId,
+          email: email,
+          profile_type: profileType
+        };
+        
+        setUser(mockUser);
+        setProfileType(profileType);
+        
+        toast({
+          title: "Conta simulada criada com sucesso",
+          description: "Você está usando o modo de desenvolvimento."
+        });
+        
+        // Redireciona para a página apropriada
+        switch(profileType) {
+          case 'talent':
+            navigate('/jovem');
+            break;
+          case 'hr':
+            navigate('/rh');
+            break;
+          case 'manager':
+            navigate('/gestor');
+            break;
+        }
+        
+        return { error: null };
+      }
+      
+      // Cadastro real com Supabase
       const { data, error } = await supabase.auth.signUp({ email, password });
       
       if (error) {
@@ -234,6 +303,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Função de logout
   const signOut = async () => {
+    // Em modo de desenvolvimento, apenas limpa o estado local
+    if (isDevMode) {
+      setUser(null);
+      setProfileType(null);
+      navigate('/');
+      toast({
+        title: "Logout realizado",
+        description: "Você saiu da sua conta simulada"
+      });
+      return;
+    }
+    
+    // Logout real com Supabase
     await supabase.auth.signOut();
     navigate('/');
     toast({
@@ -246,6 +328,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getProfile = async () => {
     if (!user) return null;
     
+    // Em modo de desenvolvimento, retorna perfil simulado
+    if (isDevMode) {
+      switch(profileType) {
+        case 'talent': {
+          return { 
+            data: { 
+              id: `dev-talent-${Date.now()}`,
+              user_id: user.id,
+              full_name: "Jovem de Teste",
+              interest_area: "Desenvolvimento Web",
+              portfolio_link: "https://example.com/portfolio",
+              avatar_url: null,
+              created_at: new Date().toISOString()
+            }, 
+            error: null 
+          };
+        }
+        case 'hr': {
+          return { 
+            data: { 
+              id: `dev-hr-${Date.now()}`,
+              user_id: user.id,
+              full_name: "RH de Teste",
+              company: "Empresa Teste",
+              cnpj: "12.345.678/0001-90",
+              avatar_url: null,
+              created_at: new Date().toISOString()
+            }, 
+            error: null 
+          };
+        }
+        case 'manager': {
+          return { 
+            data: { 
+              id: `dev-manager-${Date.now()}`,
+              user_id: user.id,
+              full_name: "Gestor de Teste",
+              company: "Empresa Teste",
+              position: "Diretor de Inovação",
+              talent_search_area: "Tecnologia",
+              avatar_url: null,
+              created_at: new Date().toISOString()
+            }, 
+            error: null 
+          };
+        }
+        default:
+          return { data: null, error: null };
+      }
+    }
+    
+    // Busca de perfil real com Supabase
     try {
       switch(profileType) {
         case 'talent': {
@@ -288,7 +422,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signUp,
     signOut,
-    getProfile
+    getProfile,
+    isDevMode
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
