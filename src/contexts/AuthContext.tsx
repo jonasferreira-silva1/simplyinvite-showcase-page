@@ -1,8 +1,19 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase, ProfileType, AuthUser, isSupabaseConfigured } from '@/lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
+
+import { AuthUser, ProfileType } from '@/backend/types/profiles';
+import { supabase, isSupabaseConfigured } from '@/backend/database/supabase';
+import { 
+  signInWithEmail, 
+  signUpWithEmail, 
+  signOut as authSignOut, 
+  getCurrentSession,
+  getUserProfile,
+  createUserProfile 
+} from '@/backend/auth/authService';
+import { simulateAuth, simulateGetProfile } from '@/backend/utils/developmentMode';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -33,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       
       // Verifica se há uma sessão ativa
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await getCurrentSession();
       
       setSession(session);
       
@@ -108,15 +119,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (isDevMode) {
         console.log("🔧 Usando modo de desenvolvimento para autenticação");
         
-        // Simula um usuário autenticado
-        const mockUserId = `dev-${profileType}-${Date.now()}`;
-        const mockUser = {
-          id: mockUserId,
-          email: email,
-          profile_type: profileType
-        };
+        // Simula um usuário autenticado usando o serviço de desenvolvimento
+        const mockAuthResult = simulateAuth(email, profileType);
         
-        setUser(mockUser);
+        if (!mockAuthResult) {
+          toast({
+            variant: "destructive",
+            title: "Erro ao entrar",
+            description: "Credenciais inválidas ou usuário não encontrado"
+          });
+          return { error: { message: "Credenciais inválidas" } };
+        }
+        
+        setUser(mockAuthResult.user);
         setProfileType(profileType);
         
         // Redireciona para a página apropriada
@@ -135,8 +150,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error: null };
       }
       
-      // Login real com Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      // Login real com Supabase através do serviço de autenticação
+      const { data, error } = await signInWithEmail(email, password);
       
       if (error) {
         toast({
@@ -231,7 +246,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Cadastro real com Supabase
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await signUpWithEmail(email, password);
       
       if (error) {
         toast({
@@ -243,53 +258,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
-        // Cria registro na tabela users
-        await supabase.from('users').insert([
-          { 
-            id: data.user.id, 
-            email: data.user.email,
-            profile_type: profileType 
-          }
-        ]);
-
-        // Cria registro na tabela específica baseada no tipo de perfil
-        switch(profileType) {
-          case 'talent':
-            await supabase.from('talent_profiles').insert([{
-              user_id: data.user.id,
-              full_name: userData.fullName,
-              interest_area: userData.interestArea,
-              portfolio_link: userData.portfolioLink
-            }]);
-            navigate('/jovem');
-            break;
-          case 'hr':
-            await supabase.from('hr_profiles').insert([{
-              user_id: data.user.id,
-              full_name: userData.fullName,
-              company: userData.company,
-              cnpj: userData.cnpj
-            }]);
-            navigate('/rh');
-            break;
-          case 'manager':
-            await supabase.from('manager_profiles').insert([{
-              user_id: data.user.id,
-              full_name: userData.fullName,
-              company: userData.company,
-              position: userData.position,
-              talent_search_area: userData.talentSearchArea
-            }]);
-            navigate('/gestor');
-            break;
-        }
+        // Cria registro na tabela users e nas tabelas de perfil
+        await createUserProfile(data.user.id, profileType, {
+          email: data.user.email,
+          ...userData
+        });
 
         toast({
           title: "Conta criada com sucesso",
           description: "Bem-vindo ao SimplyInvite!"
         });
-      }
 
+        // Redireciona para a página apropriada
+        switch(profileType) {
+          case 'talent':
+            navigate('/jovem');
+            break;
+          case 'hr':
+            navigate('/rh');
+            break;
+          case 'manager':
+            navigate('/gestor');
+            break;
+        }
+      }
+      
       return { error: null };
     } catch (error: any) {
       toast({
@@ -315,8 +308,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     
-    // Logout real com Supabase
-    await supabase.auth.signOut();
+    // Logout real com o serviço de autenticação
+    await authSignOut();
     navigate('/');
     toast({
       title: "Logout realizado",
@@ -328,90 +321,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getProfile = async () => {
     if (!user) return null;
     
-    // Em modo de desenvolvimento, retorna perfil simulado
+    // Em modo de desenvolvimento, retorna perfil simulado usando o serviço de desenvolvimento
     if (isDevMode) {
-      switch(profileType) {
-        case 'talent': {
-          return { 
-            data: { 
-              id: `dev-talent-${Date.now()}`,
-              user_id: user.id,
-              full_name: "Jovem de Teste",
-              interest_area: "Desenvolvimento Web",
-              portfolio_link: "https://example.com/portfolio",
-              avatar_url: null,
-              created_at: new Date().toISOString()
-            }, 
-            error: null 
-          };
-        }
-        case 'hr': {
-          return { 
-            data: { 
-              id: `dev-hr-${Date.now()}`,
-              user_id: user.id,
-              full_name: "RH de Teste",
-              company: "Empresa Teste",
-              cnpj: "12.345.678/0001-90",
-              avatar_url: null,
-              created_at: new Date().toISOString()
-            }, 
-            error: null 
-          };
-        }
-        case 'manager': {
-          return { 
-            data: { 
-              id: `dev-manager-${Date.now()}`,
-              user_id: user.id,
-              full_name: "Gestor de Teste",
-              company: "Empresa Teste",
-              position: "Diretor de Inovação",
-              talent_search_area: "Tecnologia",
-              avatar_url: null,
-              created_at: new Date().toISOString()
-            }, 
-            error: null 
-          };
-        }
-        default:
-          return { data: null, error: null };
-      }
+      return simulateGetProfile(user.id, profileType as ProfileType);
     }
     
-    // Busca de perfil real com Supabase
-    try {
-      switch(profileType) {
-        case 'talent': {
-          const { data, error } = await supabase
-            .from('talent_profiles')
-            .select('*')
-            .eq('user_id', user.id)
-            .single();
-          return { data, error };
-        }
-        case 'hr': {
-          const { data, error } = await supabase
-            .from('hr_profiles')
-            .select('*')
-            .eq('user_id', user.id)
-            .single();
-          return { data, error };
-        }
-        case 'manager': {
-          const { data, error } = await supabase
-            .from('manager_profiles')
-            .select('*')
-            .eq('user_id', user.id)
-            .single();
-          return { data, error };
-        }
-        default:
-          return { data: null, error: null };
-      }
-    } catch (error) {
-      return { data: null, error };
-    }
+    // Busca de perfil real usando o serviço de autenticação
+    return getUserProfile(user.id, profileType as ProfileType);
   };
 
   const value = {

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "@/components/auth/AuthForm";
 import DevModeLogin from "@/components/auth/DevModeLogin";
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { isSupabaseConfigured } from "@/backend/database/supabase";
 
 const ManagerAuth = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(true);

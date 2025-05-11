@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { ProfileType } from '@/lib/supabase';
+import { ProfileType } from '@/backend/types/profiles';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
