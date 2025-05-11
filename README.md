@@ -1,73 +1,117 @@
-# Welcome to your Lovable project
 
-## Project info
+# SimplyInvite - Plataforma de Conexão entre Talentos e Empresas
+
+## Informações do Projeto
 
 **URL**: https://lovable.dev/projects/0f2240e2-a93e-4140-98b9-b1de4eca2e73
 
-## How can I edit this code?
+## Como usar este projeto
 
-There are several ways of editing your application.
+Existem várias maneiras de editar e executar esta aplicação:
 
-**Use Lovable**
+### Usar o Lovable
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0f2240e2-a93e-4140-98b9-b1de4eca2e73) and start prompting.
+Simplesmente visite [SimplyInvite no Lovable](https://lovable.dev/projects/0f2240e2-a93e-4140-98b9-b1de4eca2e73) e comece a usar.
 
-Changes made via Lovable will be committed automatically to this repo.
+As alterações feitas via Lovable serão automaticamente sincronizadas com este repositório.
 
-**Use your preferred IDE**
+### Usar sua IDE preferida
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Se preferir trabalhar localmente usando sua própria IDE, você pode clonar este repositório e enviar alterações. As modificações enviadas também serão refletidas no Lovable.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+O único requisito é ter Node.js e npm instalados - [instale com nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Follow these steps:
+Siga estes passos:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Passo 1: Clone o repositório usando a URL Git do projeto.
+git clone <URL_DO_SEU_GIT>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Passo 2: Navegue até o diretório do projeto.
+cd <NOME_DO_SEU_PROJETO>
 
-# Step 3: Install the necessary dependencies.
+# Passo 3: Instale as dependências necessárias.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Passo 4: Inicie o servidor de desenvolvimento com recarga automática e pré-visualização instantânea.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Editar um arquivo diretamente no GitHub
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- Navegue até o(s) arquivo(s) desejado(s).
+- Clique no botão "Edit" (ícone de lápis) no canto superior direito da visualização do arquivo.
+- Faça suas alterações e confirme-as.
 
-**Use GitHub Codespaces**
+### Usar o GitHub Codespaces
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Navegue até a página principal do seu repositório.
+- Clique no botão "Code" (botão verde) próximo ao canto superior direito.
+- Selecione a aba "Codespaces".
+- Clique em "New codespace" para iniciar um novo ambiente Codespace.
+- Edite os arquivos diretamente no Codespace e confirme e envie suas alterações quando terminar.
 
-## What technologies are used for this project?
+## Como fazer login no modo de desenvolvimento
 
-This project is built with:
+Este sistema possui três tipos de perfis: Jovem Talento, Profissional RH e Gestor. No modo de desenvolvimento (quando o Supabase não está configurado), você pode usar os seguintes métodos para fazer login:
+
+### Opção 1: Usar os botões de login rápido
+Na página de login (Jovem, RH ou Gestor), você verá uma caixa laranja com botões para login rápido.
+
+### Opção 2: Utilizar credenciais de teste
+- **Perfil Jovem Talento**:
+  - Email: jovem@example.com
+  - Senha: senha123
+- **Perfil RH**:
+  - Email: rh@example.com
+  - Senha: senha123
+- **Perfil Gestor**:
+  - Email: gestor@example.com
+  - Senha: senha123
+
+## Tecnologias utilizadas neste projeto
+
+Este projeto é construído com:
 
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (para autenticação e banco de dados)
 
-## How can I deploy this project?
+## Estrutura do Projeto
 
-Simply open [Lovable](https://lovable.dev/projects/0f2240e2-a93e-4140-98b9-b1de4eca2e73) and click on Share -> Publish.
+- `src/`: Código fonte principal
+  - `components/`: Componentes React reutilizáveis
+  - `pages/`: Páginas da aplicação
+  - `backend/`: Lógica do backend
+    - `auth/`: Serviços de autenticação
+    - `database/`: Configuração do banco de dados
+    - `services/`: Serviços específicos por perfil
+    - `types/`: Tipos e interfaces
+    - `utils/`: Funções utilitárias
+  - `contexts/`: Contextos React (AuthContext, etc.)
+  - `hooks/`: Hooks personalizados
 
-## Can I connect a custom domain to my Lovable project?
+## Configuração para Produção
 
-Yes, you can!
+Para usar em ambiente de produção, você precisa:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Criar um projeto no Supabase (https://supabase.com)
+2. Obter as credenciais do projeto (URL e chave anônima)
+3. Configurar as variáveis de ambiente:
+   - `VITE_SUPABASE_URL`: URL do seu projeto Supabase
+   - `VITE_SUPABASE_ANON_KEY`: Chave anônima do seu projeto Supabase
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Como implantar este projeto
+
+Abra [Lovable](https://lovable.dev/projects/0f2240e2-a93e-4140-98b9-b1de4eca2e73) e clique em Share -> Publish.
+
+## Posso conectar um domínio personalizado ao meu projeto Lovable?
+
+Sim, você pode!
+
+Para conectar um domínio, navegue até Project > Settings > Domains e clique em Connect Domain.
+
+Leia mais aqui: [Configurando um domínio personalizado](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
