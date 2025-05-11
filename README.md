@@ -94,14 +94,3 @@ Para usar em ambiente de produção, você precisa:
    - `VITE_SUPABASE_URL`: URL do seu projeto Supabase
    - `VITE_SUPABASE_ANON_KEY`: Chave anônima do seu projeto Supabase
 
-## Como implantar este projeto
-
-Abra [Lovable](https://lovable.dev/projects/0f2240e2-a93e-4140-98b9-b1de4eca2e73) e clique em Share -> Publish.
-
-## Posso conectar um domínio personalizado ao meu projeto Lovable?
-
-Sim, você pode!
-
-Para conectar um domínio, navegue até Project > Settings > Domains e clique em Connect Domain.
-
-Leia mais aqui: [Configurando um domínio personalizado](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
