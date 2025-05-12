@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -7,7 +6,6 @@ import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import Benefits from "@/components/Benefits";
 import Footer from "@/components/Footer";
-import InfoHeader from "@/components/InfoHeader";
 import { isSupabaseConfigured } from "@/backend/database/supabase";
 
 const Index = () => {
@@ -16,7 +14,7 @@ const Index = () => {
   
   return (
     <div className="min-h-screen">
-      {showInfoHeader && <InfoHeader />}
+      {/* {showInfoHeader && <InfoHeader />} */}
       <Navbar />
       <HeroSection />
       <HowItWorks />

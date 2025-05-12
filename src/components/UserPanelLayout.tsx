@@ -1,10 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  SidebarProvider, 
-  Sidebar, 
-  SidebarContent, 
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarContent,
   SidebarHeader,
   SidebarFooter,
   SidebarTrigger,
@@ -12,24 +11,24 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarSeparator,
-  SidebarGroup
+  SidebarGroup,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Bell, 
-  Home, 
-  Settings, 
-  User, 
-  LogOut, 
-  FileText, 
-  Medal, 
-  Clock, 
-  Inbox, 
-  Search, 
-  Star, 
-  Calendar, 
+import {
+  Bell,
+  Home,
+  Settings,
+  User,
+  LogOut,
+  FileText,
+  Medal,
+  Clock,
+  Inbox,
+  Search,
+  Star,
+  Calendar,
   Building,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,12 +42,18 @@ interface UserPanelLayoutProps {
   userImage?: string;
 }
 
-const UserPanelLayout = ({ children, userName: providedUserName, userType, userImage }: UserPanelLayoutProps) => {
+const UserPanelLayout = ({
+  children,
+  userName: providedUserName,
+  userType,
+  userImage,
+}: UserPanelLayoutProps) => {
   const location = useLocation();
-  const { user, profileType, getProfile, signOut } = useAuth();
+  const { user, profileType, getProfile, signOut, setUser, setProfileType } =
+    useAuth();
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>(providedUserName || "");
-  
+
   useEffect(() => {
     const loadProfileData = async () => {
       if (user) {
@@ -59,15 +64,15 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
         setLoading(false);
       }
     };
-    
+
     loadProfileData();
   }, [user, getProfile]);
-  
+
   const getUserInitials = () => {
     return userName
       ? userName
           .split(" ")
-          .map(n => n[0])
+          .map((n) => n[0])
           .join("")
           .toUpperCase()
       : "U";
@@ -76,16 +81,20 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
   const userTypeLabel = {
     talent: "Jovem Talento",
     hr: "Profissional RH",
-    manager: "Gestor"
+    manager: "Gestor",
   };
 
   // Get the base path for the user type
   const getBasePath = () => {
-    switch(userType) {
-      case "talent": return "/jovem";
-      case "hr": return "/rh";
-      case "manager": return "/gestor";
-      default: return "/";
+    switch (userType) {
+      case "talent":
+        return "/jovem";
+      case "hr":
+        return "/rh";
+      case "manager":
+        return "/gestor";
+      default:
+        return "/";
     }
   };
 
@@ -93,100 +102,100 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
 
   // Define menu items based on user type
   const getMenuItems = () => {
-    switch(userType) {
+    switch (userType) {
       case "talent":
         return [
-          { 
-            path: "/jovem", 
-            label: "Painel Principal", 
-            icon: <Home className="h-4 w-4" /> 
+          {
+            path: "/jovem",
+            label: "Painel Principal",
+            icon: <Home className="h-4 w-4" />,
           },
-          { 
-            path: "/jovem/perfil", 
-            label: "Meu Perfil", 
-            icon: <User className="h-4 w-4" /> 
+          {
+            path: "/jovem/perfil",
+            label: "Meu Perfil",
+            icon: <User className="h-4 w-4" />,
           },
-          { 
-            path: "/jovem/submissoes", 
-            label: "Meus Envios", 
-            icon: <FileText className="h-4 w-4" /> 
+          {
+            path: "/jovem/submissoes",
+            label: "Meus Envios",
+            icon: <FileText className="h-4 w-4" />,
           },
-          { 
-            path: "/jovem/feedbacks", 
-            label: "Feedbacks", 
-            icon: <Medal className="h-4 w-4" /> 
+          {
+            path: "/jovem/feedbacks",
+            label: "Feedbacks",
+            icon: <Medal className="h-4 w-4" />,
           },
-          { 
-            path: "/jovem/evolucao", 
-            label: "Minha Evolução", 
-            icon: <Clock className="h-4 w-4" /> 
+          {
+            path: "/jovem/evolucao",
+            label: "Minha Evolução",
+            icon: <Clock className="h-4 w-4" />,
           },
-          { 
-            path: "/jovem/convites", 
-            label: "Convites", 
-            icon: <Inbox className="h-4 w-4" /> 
-          }
+          {
+            path: "/jovem/convites",
+            label: "Convites",
+            icon: <Inbox className="h-4 w-4" />,
+          },
         ];
       case "hr":
         return [
-          { 
-            path: "/rh", 
-            label: "Painel Principal", 
-            icon: <Home className="h-4 w-4" /> 
+          {
+            path: "/rh",
+            label: "Painel Principal",
+            icon: <Home className="h-4 w-4" />,
           },
-          { 
-            path: "/rh/projetos-pendentes", 
-            label: "Projetos para Avaliar", 
-            icon: <FileText className="h-4 w-4" /> 
+          {
+            path: "/rh/projetos-pendentes",
+            label: "Projetos para Avaliar",
+            icon: <FileText className="h-4 w-4" />,
           },
-          { 
-            path: "/rh/historico", 
-            label: "Histórico de Avaliações", 
-            icon: <Clock className="h-4 w-4" /> 
+          {
+            path: "/rh/historico",
+            label: "Histórico de Avaliações",
+            icon: <Clock className="h-4 w-4" />,
           },
-          { 
-            path: "/rh/mensagens", 
-            label: "Mensagens", 
-            icon: <MessageSquare className="h-4 w-4" /> 
+          {
+            path: "/rh/mensagens",
+            label: "Mensagens",
+            icon: <MessageSquare className="h-4 w-4" />,
           },
-          { 
-            path: "/rh/perfil", 
-            label: "Perfil da Empresa", 
-            icon: <Building className="h-4 w-4" /> 
+          {
+            path: "/rh/perfil",
+            label: "Perfil da Empresa",
+            icon: <Building className="h-4 w-4" />,
           },
-          { 
-            path: "/rh/relatorios", 
-            label: "Relatórios", 
-            icon: <FileText className="h-4 w-4" /> 
-          }
+          {
+            path: "/rh/relatorios",
+            label: "Relatórios",
+            icon: <FileText className="h-4 w-4" />,
+          },
         ];
       case "manager":
         return [
-          { 
-            path: "/gestor", 
-            label: "Painel Principal", 
-            icon: <Home className="h-4 w-4" /> 
+          {
+            path: "/gestor",
+            label: "Painel Principal",
+            icon: <Home className="h-4 w-4" />,
           },
-          { 
-            path: "/gestor/explorar", 
-            label: "Explorar Talentos", 
-            icon: <Search className="h-4 w-4" /> 
+          {
+            path: "/gestor/explorar",
+            label: "Explorar Talentos",
+            icon: <Search className="h-4 w-4" />,
           },
-          { 
-            path: "/gestor/favoritos", 
-            label: "Favoritos", 
-            icon: <Star className="h-4 w-4" /> 
+          {
+            path: "/gestor/favoritos",
+            label: "Favoritos",
+            icon: <Star className="h-4 w-4" />,
           },
-          { 
-            path: "/gestor/entrevistas", 
-            label: "Entrevistas", 
-            icon: <Calendar className="h-4 w-4" /> 
+          {
+            path: "/gestor/entrevistas",
+            label: "Entrevistas",
+            icon: <Calendar className="h-4 w-4" />,
           },
-          { 
-            path: "/gestor/empresa", 
-            label: "Minha Empresa", 
-            icon: <Building className="h-4 w-4" /> 
-          }
+          {
+            path: "/gestor/empresa",
+            label: "Minha Empresa",
+            icon: <Building className="h-4 w-4" />,
+          },
         ];
       default:
         return [];
@@ -211,8 +220,12 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
                 <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
               <div className="text-center">
-                <p className="text-sm font-medium">{userName || "Carregando..."}</p>
-                <p className="text-xs text-muted-foreground">{userTypeLabel[userType]}</p>
+                <p className="text-sm font-medium">
+                  {userName || "Carregando..."}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {userTypeLabel[userType]}
+                </p>
               </div>
             </div>
           </SidebarHeader>
@@ -222,8 +235,8 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
               <SidebarMenu>
                 {menuItems.map((item) => (
                   <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton 
-                      asChild 
+                    <SidebarMenuButton
+                      asChild
                       tooltip={item.label}
                       isActive={isActive(item.path)}
                     >
@@ -236,7 +249,7 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
                 ))}
               </SidebarMenu>
             </SidebarGroup>
-            
+
             <SidebarGroup>
               <SidebarMenu>
                 <SidebarMenuItem>
@@ -247,7 +260,7 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-                
+
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Configurações">
                     <Link to="#">
@@ -263,9 +276,9 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
           <SidebarFooter className="py-2">
             <SidebarSeparator />
             <div className="p-2">
-              <Button 
-                variant="outline" 
-                className="w-full justify-start" 
+              <Button
+                variant="outline"
+                className="w-full justify-start"
                 onClick={signOut}
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -274,7 +287,7 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
             </div>
           </SidebarFooter>
         </Sidebar>
-        
+
         <div className="flex-1 overflow-auto">
           <div className="flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">
             <SidebarTrigger />
@@ -300,9 +313,7 @@ const UserPanelLayout = ({ children, userName: providedUserName, userType, userI
   );
 
   return (
-    <ProtectedRoute requiredProfileType={userType}>
-      {content}
-    </ProtectedRoute>
+    <ProtectedRoute requiredProfileType={userType}>{content}</ProtectedRoute>
   );
 };
 

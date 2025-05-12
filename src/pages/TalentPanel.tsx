@@ -1,4 +1,3 @@
-
 import React from "react";
 import UserPanelLayout from "@/components/UserPanelLayout";
 import { Button } from "@/components/ui/button";
@@ -19,15 +18,15 @@ const TalentPanel = () => {
       title: "App Educacional",
       image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
       medalType: "prata" as const,
-      hasFeedback: true
+      hasFeedback: true,
     },
     {
       id: "2",
       title: "Projeto Social",
       image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
       medalType: null,
-      hasFeedback: false
-    }
+      hasFeedback: false,
+    },
   ];
 
   const mockFeedbacks = [
@@ -37,7 +36,7 @@ const TalentPanel = () => {
       date: "12/05/2023",
       text: "Seu app tem uma interface muito intuitiva! Continue trabalhando na documentação do projeto.",
       category: "UX Design",
-      isNew: true
+      isNew: true,
     },
     {
       id: "2",
@@ -45,8 +44,8 @@ const TalentPanel = () => {
       date: "05/04/2023",
       text: "Bom trabalho na implementação do backend. Sugiro adicionar mais testes.",
       category: "Desenvolvimento",
-      isNew: false
-    }
+      isNew: false,
+    },
   ];
 
   const mockInvites = [
@@ -54,8 +53,8 @@ const TalentPanel = () => {
       id: "1",
       company: "Tech Solutions",
       date: "15/05/2023 às 14:30",
-      type: "Entrevista Online"
-    }
+      type: "Entrevista Online",
+    },
   ];
 
   // Handlers
@@ -75,7 +74,9 @@ const TalentPanel = () => {
     <UserPanelLayout userName="Ana Silva" userType="talent">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight">Bem-vindo(a), Ana!</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Bem-vindo(a), Ana!
+          </h1>
           <Link to="/jovem/submissoes">
             <Button onClick={handleNewProject}>
               <Plus className="mr-2 h-4 w-4" />
@@ -84,29 +85,29 @@ const TalentPanel = () => {
           </Link>
         </div>
 
-        <ProfileSummary 
+        <ProfileSummary
           name="Ana Silva"
           stats={[
             { label: "Projetos enviados", value: 2 },
-            { label: "Feedbacks recebidos", value: 2 }
+            { label: "Feedbacks recebidos", value: 2 },
           ]}
           tags={["Design", "Frontend", "UX/UI"]}
         />
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <StatCard 
+          <StatCard
             title="Projetos Enviados"
             value="2"
             description="Continue compartilhando seu talento!"
             icon={<FileVideo className="h-4 w-4" />}
           />
-          <StatCard 
+          <StatCard
             title="Medalhas Recebidas"
             value="1"
             description="Medalha de Prata obtida!"
             icon={<Medal className="h-4 w-4" />}
           />
-          <StatCard 
+          <StatCard
             title="Visualizações"
             value="32"
             description="Seu vídeo está sendo notado!"
@@ -182,10 +183,15 @@ const TalentPanel = () => {
             <div className="rounded-md border">
               <div className="p-4">
                 {mockInvites.map((invite) => (
-                  <div key={invite.id} className="flex justify-between items-center">
+                  <div
+                    key={invite.id}
+                    className="flex justify-between items-center"
+                  >
                     <div>
                       <h3 className="font-medium">{invite.company}</h3>
-                      <p className="text-sm text-muted-foreground">{invite.date}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {invite.date}
+                      </p>
                       <Badge className="mt-1">{invite.type}</Badge>
                     </div>
                     <Link to="/jovem/convites">
@@ -199,7 +205,9 @@ const TalentPanel = () => {
             </div>
           ) : (
             <div className="text-center py-10 border rounded-md">
-              <p className="text-muted-foreground">Nenhum convite recebido ainda.</p>
+              <p className="text-muted-foreground">
+                Nenhum convite recebido ainda.
+              </p>
               <p className="text-sm text-muted-foreground mt-1">
                 Continue enviando projetos para aumentar suas chances!
               </p>

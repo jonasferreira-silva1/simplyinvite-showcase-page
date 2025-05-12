@@ -1,35 +1,52 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { Session, User } from "@supabase/supabase-js";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
-import { AuthUser, ProfileType } from '@/backend/types/profiles';
-import { supabase, isSupabaseConfigured } from '@/backend/database/supabase';
-import { 
-  signInWithEmail, 
-  signUpWithEmail, 
-  signOut as authSignOut, 
+import { AuthUser, ProfileType } from "@/backend/types/profiles";
+import { supabase, isSupabaseConfigured } from "@/backend/database/supabase";
+import {
+  signInWithEmail,
+  signUpWithEmail,
+  signOut as authSignOut,
   getCurrentSession,
   getUserProfile,
-  createUserProfile 
-} from '@/backend/auth/authService';
-import { simulateAuth, simulateGetProfile } from '@/backend/utils/developmentMode';
+  createUserProfile,
+} from "@/backend/auth/authService";
+import {
+  simulateAuth,
+  simulateGetProfile,
+} from "@/backend/utils/developmentMode";
 
 interface AuthContextType {
   user: AuthUser | null;
   session: Session | null;
   loading: boolean;
   profileType: ProfileType | null;
-  signIn: (email: string, password: string, profileType: ProfileType) => Promise<{ error: any | null }>;
-  signUp: (email: string, password: string, profileType: ProfileType, userData: any) => Promise<{ error: any | null }>;
+  signIn: (
+    email: string,
+    password: string,
+    expectedProfileType: ProfileType
+  ) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    profileType: ProfileType,
+    userData: any
+  ) => Promise<{ error: any | null }>;
   signOut: () => Promise<void>;
   getProfile: () => Promise<any>;
   isDevMode: boolean;
+  setUser: (user: AuthUser | null) => void;
+  setProfileType: (type: ProfileType | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [profileType, setProfileType] = useState<ProfileType | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -42,70 +59,74 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Inicializa o estado da autenticação
     const initAuth = async () => {
       setLoading(true);
-      
+
       // Verifica se há uma sessão ativa
-      const { data: { session } } = await getCurrentSession();
-      
+      const {
+        data: { session },
+      } = await getCurrentSession();
+
       setSession(session);
-      
+
       if (session?.user) {
         // Busca informações adicionais do usuário
         const { data: userData, error } = await supabase
-          .from('users')
-          .select('profile_type')
-          .eq('id', session.user.id)
+          .from("users")
+          .select("profile_type")
+          .eq("id", session.user.id)
           .single();
-        
+
         if (userData) {
           setUser({
             id: session.user.id,
-            email: session.user.email || '',
+            email: session.user.email || "",
             profile_type: userData.profile_type,
           });
           setProfileType(userData.profile_type);
         } else {
           setUser({
             id: session.user.id,
-            email: session.user.email || '',
+            email: session.user.email || "",
           });
         }
       }
-      
+
       setLoading(false);
     };
 
     initAuth();
 
     // Configura listener para mudanças na autenticação
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      
-      if (event === 'SIGNED_IN' && session) {
-        // Busca informações adicionais do usuário
-        const { data: userData } = await supabase
-          .from('users')
-          .select('profile_type')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (userData) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            profile_type: userData.profile_type,
-          });
-          setProfileType(userData.profile_type);
-        } else {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-          });
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+
+        if (event === "SIGNED_IN" && session) {
+          // Busca informações adicionais do usuário
+          const { data: userData } = await supabase
+            .from("users")
+            .select("profile_type")
+            .eq("id", session.user.id)
+            .single();
+
+          if (userData) {
+            setUser({
+              id: session.user.id,
+              email: session.user.email || "",
+              profile_type: userData.profile_type,
+            });
+            setProfileType(userData.profile_type);
+          } else {
+            setUser({
+              id: session.user.id,
+              email: session.user.email || "",
+            });
+          }
+        } else if (event === "SIGNED_OUT") {
+          setUser(null);
+          setProfileType(null);
         }
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        setProfileType(null);
       }
-    });
+    );
 
     return () => {
       authListener.subscription.unsubscribe();
@@ -113,146 +134,159 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   // Função de login
-  const signIn = async (email: string, password: string, profileType: ProfileType) => {
+  const signIn = async (
+    email: string,
+    password: string,
+    expectedProfileType: ProfileType
+  ) => {
     try {
       // Modo de desenvolvimento (simulação de autenticação)
       if (isDevMode) {
         console.log("🔧 Usando modo de desenvolvimento para autenticação");
-        
-        // Simula um usuário autenticado usando o serviço de desenvolvimento
-        const mockAuthResult = simulateAuth(email, profileType);
-        
-        if (!mockAuthResult) {
-          toast({
-            variant: "destructive",
-            title: "Erro ao entrar",
-            description: "Credenciais inválidas ou usuário não encontrado"
-          });
-          return { error: { message: "Credenciais inválidas" } };
-        }
-        
-        setUser(mockAuthResult.user);
-        setProfileType(profileType);
-        
+
+        // Simula um usuário autenticado
+        const mockUser = {
+          id: `dev-${expectedProfileType}-${Date.now()}`,
+          email: email,
+          profile_type: expectedProfileType,
+        };
+
+        setUser(mockUser);
+        setProfileType(expectedProfileType);
+
         // Redireciona para a página apropriada
-        switch(profileType) {
-          case 'talent':
-            navigate('/jovem');
+        switch (expectedProfileType) {
+          case "talent":
+            navigate("/jovem");
             break;
-          case 'hr':
-            navigate('/rh');
+          case "hr":
+            navigate("/rh");
             break;
-          case 'manager':
-            navigate('/gestor');
+          case "manager":
+            navigate("/gestor");
             break;
         }
-        
-        return { error: null };
+
+        return;
       }
-      
-      // Login real com Supabase através do serviço de autenticação
-      const { data, error } = await signInWithEmail(email, password);
-      
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Erro ao entrar",
-          description: error.message
+
+      // Login real com Supabase
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
-        return { error };
+
+      if (authError) {
+        toast.error("Credenciais inválidas");
+        return;
       }
 
-      // Verifica se o tipo de perfil corresponde
-      if (data.user) {
-        const { data: userData } = await supabase
-          .from('users')
-          .select('profile_type')
-          .eq('id', data.user.id)
-          .single();
-        
-        if (userData && userData.profile_type !== profileType) {
-          // Tipo de perfil não corresponde
-          await supabase.auth.signOut();
-          toast({
-            variant: "destructive",
-            title: "Tipo de perfil incorreto",
-            description: "O email fornecido está associado a um tipo de perfil diferente."
-          });
-          return { error: { message: "Tipo de perfil incorreto" } };
-        }
-
-        // Redireciona para a página apropriada
-        switch(profileType) {
-          case 'talent':
-            navigate('/jovem');
-            break;
-          case 'hr':
-            navigate('/rh');
-            break;
-          case 'manager':
-            navigate('/gestor');
-            break;
-        }
+      if (!authData.user) {
+        toast.error("Usuário não encontrado");
+        return;
       }
 
-      return { error: null };
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Erro inesperado",
-        description: error.message
-      });
-      return { error };
+      // Verificar o tipo de perfil
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("profile_type")
+        .eq("id", authData.user.id)
+        .single();
+
+      if (profileError || !profile) {
+        toast.error("Erro ao verificar perfil");
+        return;
+      }
+
+      if (profile.profile_type !== expectedProfileType) {
+        toast.error(
+          `Este login é apenas para ${
+            expectedProfileType === "talent"
+              ? "jovens talentos"
+              : expectedProfileType === "hr"
+              ? "profissionais de RH"
+              : "gestores"
+          }`
+        );
+        return;
+      }
+
+      setUser(authData.user);
+      setProfileType(profile.profile_type);
+
+      // Redirecionar baseado no tipo de perfil
+      switch (profile.profile_type) {
+        case "talent":
+          navigate("/jovem");
+          break;
+        case "hr":
+          navigate("/rh");
+          break;
+        case "manager":
+          navigate("/gestor");
+          break;
+        default:
+          navigate("/");
+      }
+    } catch (error) {
+      console.error("Erro no login:", error);
+      toast.error("Erro ao fazer login");
     }
   };
 
   // Função de cadastro
-  const signUp = async (email: string, password: string, profileType: ProfileType, userData: any) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    profileType: ProfileType,
+    userData: any
+  ) => {
     try {
       // Modo de desenvolvimento (simulação de cadastro)
       if (isDevMode) {
         console.log("🔧 Usando modo de desenvolvimento para cadastro");
-        
+
         // Simula um usuário cadastrado
         const mockUserId = `dev-${profileType}-${Date.now()}`;
         const mockUser = {
           id: mockUserId,
           email: email,
-          profile_type: profileType
+          profile_type: profileType,
         };
-        
+
         setUser(mockUser);
         setProfileType(profileType);
-        
+
         toast({
           title: "Conta simulada criada com sucesso",
-          description: "Você está usando o modo de desenvolvimento."
+          description: "Você está usando o modo de desenvolvimento.",
         });
-        
+
         // Redireciona para a página apropriada
-        switch(profileType) {
-          case 'talent':
-            navigate('/jovem');
+        switch (profileType) {
+          case "talent":
+            navigate("/jovem");
             break;
-          case 'hr':
-            navigate('/rh');
+          case "hr":
+            navigate("/rh");
             break;
-          case 'manager':
-            navigate('/gestor');
+          case "manager":
+            navigate("/gestor");
             break;
         }
-        
+
         return { error: null };
       }
-      
+
       // Cadastro real com Supabase
       const { data, error } = await signUpWithEmail(email, password);
-      
+
       if (error) {
         toast({
           variant: "destructive",
           title: "Erro ao cadastrar",
-          description: error.message
+          description: error.message,
         });
         return { error };
       }
@@ -261,34 +295,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Cria registro na tabela users e nas tabelas de perfil
         await createUserProfile(data.user.id, profileType, {
           email: data.user.email,
-          ...userData
+          ...userData,
         });
 
         toast({
           title: "Conta criada com sucesso",
-          description: "Bem-vindo ao SimplyInvite!"
+          description: "Bem-vindo ao SimplyInvite!",
         });
 
         // Redireciona para a página apropriada
-        switch(profileType) {
-          case 'talent':
-            navigate('/jovem');
+        switch (profileType) {
+          case "talent":
+            navigate("/jovem");
             break;
-          case 'hr':
-            navigate('/rh');
+          case "hr":
+            navigate("/rh");
             break;
-          case 'manager':
-            navigate('/gestor');
+          case "manager":
+            navigate("/gestor");
             break;
         }
       }
-      
+
       return { error: null };
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Erro inesperado",
-        description: error.message
+        description: error.message,
       });
       return { error };
     }
@@ -300,32 +334,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (isDevMode) {
       setUser(null);
       setProfileType(null);
-      navigate('/');
+      navigate("/");
       toast({
         title: "Logout realizado",
-        description: "Você saiu da sua conta simulada"
+        description: "Você saiu da sua conta simulada",
       });
       return;
     }
-    
+
     // Logout real com o serviço de autenticação
     await authSignOut();
-    navigate('/');
+    navigate("/");
     toast({
       title: "Logout realizado",
-      description: "Você saiu da sua conta"
+      description: "Você saiu da sua conta",
     });
   };
 
   // Função para obter perfil do usuário
   const getProfile = async () => {
     if (!user) return null;
-    
+
     // Em modo de desenvolvimento, retorna perfil simulado usando o serviço de desenvolvimento
     if (isDevMode) {
       return simulateGetProfile(user.id, profileType as ProfileType);
     }
-    
+
     // Busca de perfil real usando o serviço de autenticação
     return getUserProfile(user.id, profileType as ProfileType);
   };
@@ -339,7 +373,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signOut,
     getProfile,
-    isDevMode
+    isDevMode,
+    setUser,
+    setProfileType,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -348,7 +384,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
