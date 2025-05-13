@@ -6,14 +6,15 @@ import { Star } from "lucide-react";
 
 interface TestimonialProps {
   name: string;
-  age: string;
+  age?: string;
   role: string;
   quote: string;
   avatar: string;
+  institution?: string;
   isSuccess?: boolean;
 }
 
-const TestimonialCard: React.FC<TestimonialProps> = ({ name, age, role, quote, avatar, isSuccess }) => {
+const TestimonialCard: React.FC<TestimonialProps> = ({ name, age, role, quote, avatar, institution, isSuccess }) => {
   return (
     <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow">
       <CardContent className="pt-6 px-6">
@@ -25,6 +26,7 @@ const TestimonialCard: React.FC<TestimonialProps> = ({ name, age, role, quote, a
           <div>
             <p className="font-semibold text-si-blue">{name} {age && <span className="text-gray-500">({age})</span>}</p>
             <p className="text-sm text-gray-500">{role}</p>
+            {institution && <p className="text-xs text-si-accent font-medium">{institution}</p>}
             {isSuccess && (
               <div className="flex items-center mt-1">
                 {[...Array(5)].map((_, i) => (
@@ -44,30 +46,30 @@ const Testimonials = () => {
   const testimonials = [
     {
       name: "Ana",
-      age: "17",
-      role: "Desenvolvedora Júnior",
-      quote: "Meu app educacional chamou atenção de 3 empresas após receber medalha de ouro.",
+      role: "Desenvolvedora Frontend",
+      quote: "A plataforma mudou minha vida! Consegui meu primeiro emprego enquanto ainda estudava na UNINASSAU.",
       avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
+      institution: "UNINASSAU",
       isSuccess: true
     },
     {
       name: "João",
-      age: "18",
-      role: "Designer",
-      quote: "De bronze a ouro em dois meses! O feedback da plataforma foi essencial para meu crescimento.",
+      role: "Analista de Dados",
+      quote: "Sou muito grato à UFPE e à plataforma por me abrirem tantas portas.",
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150",
+      institution: "UFPE",
       isSuccess: true
     },
     {
-      name: "Maria",
-      age: "",
-      role: "Gerente de RH",
-      quote: "Revolucionou nossa forma de encontrar e desenvolver jovens talentos. Processo muito mais humano.",
+      name: "Fernanda Lima",
+      role: "Designer UX",
+      quote: "Graças à parceria da Universidade Católica com a plataforma, tive acesso a oportunidades incríveis.",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
+      institution: "Universidade Católica",
+      isSuccess: true
     },
     {
       name: "Carlos",
-      age: "",
       role: "CEO",
       quote: "Encontrei perfis qualificados e já avaliados, economizando tempo e recursos no processo seletivo.",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",

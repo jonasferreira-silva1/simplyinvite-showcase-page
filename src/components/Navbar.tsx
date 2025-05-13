@@ -34,6 +34,7 @@ const Navbar = () => {
               <a href="#how-it-works" className="text-si-blue hover:text-si-accent transition-colors">Como Funciona</a>
               <a href="#testimonials" className="text-si-blue hover:text-si-accent transition-colors">Depoimentos</a>
               <a href="#benefits" className="text-si-blue hover:text-si-accent transition-colors">Benefícios</a>
+              <a href="#ranking" className="text-si-blue hover:text-si-accent transition-colors">Ranking de Instituições</a>
               <Button 
                 className="bg-si-accent hover:bg-si-accent/90"
                 onClick={() => setIsProfileSelectorOpen(true)}
