@@ -21,7 +21,7 @@ const DevModeLogin = () => {
     toast({
       title: "Modo de desenvolvimento",
       description: "Login simulado para desenvolvimento. Configure o Supabase para autenticação real.",
-      duration: 5000
+      variant: "default"
     });
 
     // Tenta fazer login com credenciais de teste
