@@ -3,10 +3,12 @@ import { toast as sonnerToast } from "sonner";
 
 export type ToastVariant = "default" | "destructive";
 
+// Updated to match Sonner's Action type requirements
 export interface ToastActionElement {
   altText?: string;
   onClick?: () => void;
-  children: React.ReactNode;
+  label: string;  // Added this required property
+  children?: React.ReactNode; // Made optional since we'll use label instead
 }
 
 export interface ToastProps {
@@ -29,7 +31,10 @@ const defaultToastVariants: {
 export function toast({ title, description, variant = "default", action, duration }: ToastProps) {
   return sonnerToast[variant === "destructive" ? "error" : "success"](title, {
     description,
-    action,
+    action: action ? {
+      label: action.label,
+      onClick: action.onClick
+    } : undefined,
     duration,
   });
 }

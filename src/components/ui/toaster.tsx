@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast"
 import {
   Toast,
@@ -10,23 +11,12 @@ import {
 
 export function Toaster() {
   const { toasts } = useToast()
-
+  
+  // Since we're using Sonner, we just render the provider with empty content
+  // The actual toasts are handled by the Sonner component in App.tsx
   return (
     <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
-          <Toast key={id} {...props}>
-            <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
-              )}
-            </div>
-            {action}
-            <ToastClose />
-          </Toast>
-        )
-      })}
+      {/* We don't need to map over toasts since we're using Sonner */}
       <ToastViewport />
     </ToastProvider>
   )
