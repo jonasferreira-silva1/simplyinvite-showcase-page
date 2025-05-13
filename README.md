@@ -1,96 +1,159 @@
-
 # SimplyInvite - Plataforma de Conexão entre Talentos e Empresas
 
-## Informações do Projeto
+## 🚀 Início Rápido
 
-## Como usar este projeto
+### Pré-requisitos
 
-### Usar sua IDE preferida
+- Docker Desktop
+- Node.js (para desenvolvimento local)
+- Git
 
-Se preferir trabalhar localmente usando sua própria IDE, você pode clonar este repositório e enviar alterações. As modificações enviadas também serão refletidas no Lovable.
+### Executando com Docker (Recomendado)
 
-O único requisito é ter Node.js e npm instalados - [instale com nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# Clone o repositório
+git clone <URL_DO_REPOSITÓRIO>
+cd simplyinvite-showcase-page
 
-Siga estes passos:
+# Inicie os containers
+docker-compose up --build
+```
 
-```sh
-# Passo 1: Clone o repositório usando a URL Git do projeto.
-git clone <URL_DO_SEU_GIT>
+Após a execução, acesse:
 
-# Passo 2: Navegue até o diretório do projeto.
-cd <NOME_DO_SEU_PROJETO>
+- Frontend: http://localhost
+- PostgreSQL: localhost:5432
+  - Usuário: postgres
+  - Senha: jonas1385
+  - Banco: simplyinvite
 
-# Passo 3: Instale as dependências necessárias.
-npm i
+### Desenvolvimento Local
 
-# Passo 4: Inicie o servidor de desenvolvimento com recarga automática e pré-visualização instantânea.
+```bash
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-### Editar um arquivo diretamente no GitHub
+## 🔑 Credenciais de Desenvolvimento
 
-- Navegue até o(s) arquivo(s) desejado(s).
-- Clique no botão "Edit" (ícone de lápis) no canto superior direito da visualização do arquivo.
-- Faça suas alterações e confirme-as.
+Para testar a aplicação, use:
 
-### Usar o GitHub Codespaces
+| Perfil        | Email              | Senha    |
+| ------------- | ------------------ | -------- |
+| Jovem Talento | jovem@example.com  | senha123 |
+| RH            | rh@example.com     | senha123 |
+| Gestor        | gestor@example.com | senha123 |
 
-- Navegue até a página principal do seu repositório.
-- Clique no botão "Code" (botão verde) próximo ao canto superior direito.
-- Selecione a aba "Codespaces".
-- Clique em "New codespace" para iniciar um novo ambiente Codespace.
-- Edite os arquivos diretamente no Codespace e confirme e envie suas alterações quando terminar.
+## 🛠️ Tecnologias
 
-## Como fazer login no modo de desenvolvimento
+- **Frontend**
 
-Este sistema possui três tipos de perfis: Jovem Talento, Profissional RH e Gestor. No modo de desenvolvimento (quando o Supabase não está configurado), você pode usar os seguintes métodos para fazer login:
+  - React
+  - TypeScript
+  - Vite
+  - Tailwind CSS
+  - shadcn-ui
 
-### Opção 1: Usar os botões de login rápido
-Na página de login (Jovem, RH ou Gestor), você verá uma caixa laranja com botões para login rápido.
+- **Backend**
+  - PostgreSQL
+  - Supabase (autenticação)
 
-### Opção 2: Utilizar credenciais de teste
-- **Perfil Jovem Talento**:
-  - Email: jovem@example.com
-  - Senha: senha123
-- **Perfil RH**:
-  - Email: rh@example.com
-  - Senha: senha123
-- **Perfil Gestor**:
-  - Email: gestor@example.com
-  - Senha: senha123
+## 📁 Estrutura do Projeto
 
-## Tecnologias utilizadas neste projeto
+```
+src/
+├── components/     # Componentes React reutilizáveis
+├── pages/         # Páginas da aplicação
+├── backend/       # Lógica do backend
+│   ├── auth/      # Serviços de autenticação
+│   ├── database/  # Configuração do banco de dados
+│   ├── services/  # Serviços específicos por perfil
+│   ├── types/     # Tipos e interfaces
+│   └── utils/     # Funções utilitárias
+├── contexts/      # Contextos React
+└── hooks/         # Hooks personalizados
+```
 
-Este projeto é construído com:
+## 🔧 Comandos Úteis
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-- Supabase (para autenticação e banco de dados)
+```bash
+# Ver logs dos containers
+docker-compose logs
 
-## Estrutura do Projeto
+# Subir todos os containers em segundo plano
+docker-compose up -d
 
-- `src/`: Código fonte principal
-  - `components/`: Componentes React reutilizáveis
-  - `pages/`: Páginas da aplicação
-  - `backend/`: Lógica do backend
-    - `auth/`: Serviços de autenticação
-    - `database/`: Configuração do banco de dados
-    - `services/`: Serviços específicos por perfil
-    - `types/`: Tipos e interfaces
-    - `utils/`: Funções utilitárias
-  - `contexts/`: Contextos React (AuthContext, etc.)
-  - `hooks/`: Hooks personalizados
+# Subir todos os containers e reconstruir as imagens
+docker-compose up --build
 
-## Configuração para Produção
+# Parar todos os containers
+docker-compose down
 
-Para usar em ambiente de produção, você precisa:
+# Parar containers e remover volumes
+docker-compose down -v
 
-1. Criar um projeto no Supabase (https://supabase.com)
-2. Obter as credenciais do projeto (URL e chave anônima)
-3. Configurar as variáveis de ambiente:
+# Reiniciar um serviço específico
+docker-compose restart frontend
+docker-compose restart postgres
+
+# Ver os containers em execução
+docker ps
+
+# Criar uma nova imagem de um Dockerfile
+docker build -t nome-da-imagem .
+
+# Rodar um container a partir de uma imagem
+docker run -d -p 80:80 nome-da-imagem
+
+# Entrar no terminal de um container em execução
+docker exec -it nome-do-container /bin/bash
+
+# Parar um container específico
+docker stop nome-do-container
+
+# Remover um container específico
+docker rm nome-do-container
+
+```
+
+## 🚨 Solução de Problemas
+
+### Problemas Comuns
+
+1. **Porta 80 em uso**
+
+   - Verifique se não há outro serviço usando a porta 80
+   - Altere a porta no docker-compose.yml se necessário
+
+2. **Porta 5432 em uso**
+
+   - Verifique se não há outra instância do PostgreSQL rodando
+   - Altere a porta no docker-compose.yml se necessário
+
+3. **Erro de permissão**
+   - Execute o Docker Desktop como administrador
+   - Verifique as permissões das pastas do projeto
+
+## 📝 Notas de Produção
+
+Para ambiente de produção:
+
+1. Configure as variáveis de ambiente:
+
    - `VITE_SUPABASE_URL`: URL do seu projeto Supabase
    - `VITE_SUPABASE_ANON_KEY`: Chave anônima do seu projeto Supabase
 
+2. Ajuste as configurações de segurança no `nginx.conf`
+
+3. Configure backups regulares do banco de dados
+
+## 🤝 Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
