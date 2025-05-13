@@ -3,12 +3,31 @@ import React from "react";
 import UserPanelLayout from "@/components/UserPanelLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StatCard from "@/components/panels/StatCard";
-import { Medal, Clock, FileText, Calendar } from "lucide-react";
+import { Medal, Clock, FileText, Calendar, ChartPie } from "lucide-react";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent 
+} from "@/components/ui/chart";
 // You would normally import these from recharts
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from "recharts";
+import { 
+  ResponsiveContainer, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  PieChart, 
+  Pie, 
+  Cell, 
+  LineChart, 
+  Line 
+} from "recharts";
 
 const HRReports = () => {
-  // Mock data
+  // Mock data atualizado para incluir 2024 e 2025
   const evaluationData = [
     { name: "Jan", total: 12 },
     { name: "Fev", total: 18 },
@@ -30,6 +49,16 @@ const HRReports = () => {
     { name: "Impacto Social", total: 15 },
     { name: "Educação", total: 12 },
     { name: "Saúde", total: 8 },
+  ];
+  
+  // Dados atualizados para evolução anual incluindo 2024 e 2025
+  const yearlyData = [
+    { year: "2020", total: 75 },
+    { year: "2021", total: 120 },
+    { year: "2022", total: 155 },
+    { year: "2023", total: 180 },
+    { year: "2024", total: 210 },
+    { year: "2025", total: 240 },
   ];
 
   return (
@@ -87,28 +116,38 @@ const HRReports = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Distribuição de Medalhas</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ChartPie className="h-5 w-5" />
+                Distribuição de Medalhas
+              </CardTitle>
             </CardHeader>
             <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
+              <ChartContainer
+                config={{
+                  "Ouro": { color: "#FFCD29" },
+                  "Prata": { color: "#BFBFBF" },
+                  "Bronze": { color: "#B87333" }
+                }}
+              >
                 <PieChart>
                   <Pie
                     data={medalData}
                     cx="50%"
                     cy="50%"
-                    labelLine={false}
+                    labelLine={true}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
+                    nameKey="name"
                     label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   >
                     {medalData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </CardContent>
           </Card>
         </div>
@@ -127,6 +166,30 @@ const HRReports = () => {
                 <Legend />
                 <Bar dataKey="total" name="Quantidade" fill="#0EA5E9" />
               </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Evolução Anual de Contratações (2020-2025)</CardTitle>
+          </CardHeader>
+          <CardContent className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={yearlyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="year" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="total" 
+                  name="Total de Contratações" 
+                  stroke="#9b87f5" 
+                  activeDot={{ r: 8 }} 
+                />
+              </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
