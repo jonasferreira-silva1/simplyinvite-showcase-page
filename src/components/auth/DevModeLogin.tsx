@@ -25,9 +25,9 @@ const DevModeLogin = () => {
     });
 
     // Tenta fazer login com credenciais de teste
-    const { error } = await signIn(email, 'senha123', profileType);
+    const result = await signIn(email, 'senha123', profileType);
     
-    if (error) {
+    if (result?.error) {
       toast({
         variant: "destructive",
         title: "Erro no login de desenvolvimento",

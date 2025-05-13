@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -123,8 +122,8 @@ const AuthForm = ({ userType, isOpen, onClose, onSubmit }: AuthFormProps) => {
   const handleSubmit = async (data: any) => {
     try {
       if (isLogin) {
-        const { error } = await signIn(data.email, data.password, userType);
-        if (!error) {
+        const result = await signIn(data.email, data.password, userType);
+        if (!result.error) {
           onClose();
           if (onSubmit) onSubmit(data);
         }

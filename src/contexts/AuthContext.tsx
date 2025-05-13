@@ -1,8 +1,9 @@
+
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 
 import { AuthUser, ProfileType } from "@/backend/types/profiles";
 import { supabase, isSupabaseConfigured } from "@/backend/database/supabase";
@@ -28,7 +29,7 @@ interface AuthContextType {
     email: string,
     password: string,
     expectedProfileType: ProfileType
-  ) => Promise<void>;
+  ) => Promise<{error?: any}>;
   signUp: (
     email: string,
     password: string,
@@ -138,7 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     email: string,
     password: string,
     expectedProfileType: ProfileType
-  ) => {
+  ): Promise<{error?: any}> => {
     try {
       // Modo de desenvolvimento (simulação de autenticação)
       if (isDevMode) {
@@ -167,7 +168,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             break;
         }
 
-        return;
+        return {};
       }
 
       // Login real com Supabase
@@ -178,13 +179,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         });
 
       if (authError) {
-        toast.error("Credenciais inválidas");
-        return;
+        toast({
+          variant: "destructive",
+          title: "Credenciais inválidas",
+          description: authError.message,
+        });
+        return { error: authError };
       }
 
       if (!authData.user) {
-        toast.error("Usuário não encontrado");
-        return;
+        toast({
+          variant: "destructive", 
+          title: "Usuário não encontrado",
+        });
+        return { error: new Error("Usuário não encontrado") };
       }
 
       // Verificar o tipo de perfil
@@ -195,24 +203,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         .single();
 
       if (profileError || !profile) {
-        toast.error("Erro ao verificar perfil");
-        return;
+        toast({
+          variant: "destructive",
+          title: "Erro ao verificar perfil",
+          description: profileError?.message || "Perfil não encontrado",
+        });
+        return { error: profileError || new Error("Perfil não encontrado") };
       }
 
       if (profile.profile_type !== expectedProfileType) {
-        toast.error(
-          `Este login é apenas para ${
+        toast({
+          variant: "destructive",
+          title: "Tipo de perfil incorreto",
+          description: `Este login é apenas para ${
             expectedProfileType === "talent"
               ? "jovens talentos"
               : expectedProfileType === "hr"
               ? "profissionais de RH"
               : "gestores"
-          }`
-        );
-        return;
+          }`,
+        });
+        return { error: new Error("Tipo de perfil incorreto") };
       }
 
-      setUser(authData.user);
+      // Convertendo User para AuthUser
+      if (authData.user) {
+        const authUser: AuthUser = {
+          id: authData.user.id,
+          email: authData.user.email || "",
+          profile_type: profile.profile_type,
+        };
+        setUser(authUser);
+      }
+      
       setProfileType(profile.profile_type);
 
       // Redirecionar baseado no tipo de perfil
@@ -229,9 +252,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         default:
           navigate("/");
       }
-    } catch (error) {
+      
+      return {};
+    } catch (error: any) {
       console.error("Erro no login:", error);
-      toast.error("Erro ao fazer login");
+      toast({
+        variant: "destructive",
+        title: "Erro ao fazer login", 
+        description: error.message || "Ocorreu um erro ao tentar fazer login",
+      });
+      return { error };
     }
   };
 
