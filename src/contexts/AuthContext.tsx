@@ -158,7 +158,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         // Redireciona para a página apropriada
         switch (expectedProfileType) {
           case "talent":
-            navigate("/jovem");
+            // Redirecionamos para o formulário de onboarding para jovens talentos
+            navigate("/jovem/onboarding");
             break;
           case "hr":
             navigate("/rh");
@@ -238,10 +239,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       
       setProfileType(profile.profile_type);
 
-      // Redirecionar baseado no tipo de perfil
+      // Verificar se é um novo usuário de talento e redirecionar para onboarding
+      // Em uma implementação real, você verificaria se o usuário já preencheu o formulário
+      // Por enquanto, vamos sempre redirecionar para o onboarding para jovens talentos
       switch (profile.profile_type) {
         case "talent":
-          navigate("/jovem");
+          navigate("/jovem/onboarding");
           break;
         case "hr":
           navigate("/rh");

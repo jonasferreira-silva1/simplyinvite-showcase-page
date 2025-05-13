@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -21,6 +22,9 @@ import ManagerPanel from "@/pages/ManagerPanel";
 // Páginas de perfil
 import TalentProfile from "@/pages/talent/TalentProfile";
 import HRProfile from "@/pages/hr/HRProfile";
+
+// Páginas de onboarding
+import TalentOnboardingForm from "@/pages/talent/TalentOnboardingForm";
 
 // Páginas de submissões
 import TalentSubmissions from "@/pages/talent/TalentSubmissions";
@@ -58,6 +62,7 @@ const App = () => {
 
           {/* Rotas do Jovem */}
           <Route path="/jovem" element={<TalentPanel />} />
+          <Route path="/jovem/onboarding" element={<TalentOnboardingForm />} />
           <Route path="/jovem/perfil" element={<TalentProfile />} />
           <Route path="/jovem/submissoes" element={<TalentSubmissions />} />
           <Route path="/jovem/feedbacks" element={<TalentFeedback />} />
