@@ -1,28 +1,27 @@
 // @ts-ignore - Ignore React type issues
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // @ts-ignore - Ignore Router type issues
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 // @ts-ignore - Ignore lucide type issues
 import { X } from "lucide-react";
-// @ts-ignore - Ignore module resolution issues
-import LoginForm from "@/components/auth/LoginForm";
+import AuthForm from "@/components/auth/AuthForm";
 
-const TalentAuth = () => {
-  const [isAuthOpen, setIsAuthOpen] = useState(true);
+const TalentRegister = () => {
+  const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
 
   const handleClose = () => {
-    setIsAuthOpen(false);
+    setIsOpen(false);
     navigate("/");
   };
 
-  const handleLoginSuccess = () => {
-    setIsAuthOpen(false);
-    navigate("/jovem");
+  const handleSuccess = () => {
+    // O redirecionamento é feito automaticamente pelo AuthForm
+    setIsOpen(false);
   };
 
-  if (!isAuthOpen) return null;
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -35,21 +34,23 @@ const TalentAuth = () => {
       </div>
       {/* Modal */}
       <div className="fixed left-[50%] top-[50%] z-20 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Login Jovem</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Cadastro de Jovem Talento</h2>
           <Button variant="ghost" size="icon" onClick={handleClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <LoginForm 
-          defaultProfileType="talent" 
-          onSuccess={handleLoginSuccess} 
-          showRegisterLink={true}
-          registerLinkUrl="/jovem-cadastro"
+        
+        <AuthForm 
+          userType="talent"
+          isOpen={true}
+          onClose={handleClose}
+          onSubmit={handleSuccess}
+          initialMode="register"
         />
       </div>
     </div>
   );
 };
 
-export default TalentAuth;
+export default TalentRegister; 

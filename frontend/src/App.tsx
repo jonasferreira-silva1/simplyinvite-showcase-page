@@ -13,6 +13,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import TalentAuth from "@/pages/TalentAuth";
 import HRAuth from "@/pages/HRAuth";
 import ManagerAuth from "@/pages/ManagerAuth";
+import TalentRegister from "@/pages/TalentRegister";
 
 // Páginas principais
 import TalentPanel from "@/pages/TalentPanel";
@@ -63,6 +64,7 @@ const App = () => {
           <Route path="/jovem-auth" element={<TalentAuth />} />
           <Route path="/rh-auth" element={<HRAuth />} />
           <Route path="/gestor-auth" element={<ManagerAuth />} />
+          <Route path="/jovem-cadastro" element={<TalentRegister />} />
 
           {/* Rotas do Jovem */}
           <Route

@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useNavigate } from "react-router-dom";
 import { 
   Form, 
   FormControl, 
@@ -52,6 +53,7 @@ type AuthFormProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: (data: any) => void;
+  initialMode?: 'login' | 'register';
 };
 
 // Esquemas de validação
@@ -80,10 +82,22 @@ const managerSchema = registerCommonSchema.extend({
   talentSearchArea: z.string().min(2, { message: "Informe a área de busca de talentos" }),
 });
 
-const AuthForm = ({ userType, isOpen, onClose, onSubmit }: AuthFormProps) => {
-  const [isLogin, setIsLogin] = React.useState(true);
+const AuthForm = ({ 
+  userType, 
+  isOpen, 
+  onClose, 
+  onSubmit,
+  initialMode = 'login'
+}: AuthFormProps) => {
+  const [isLogin, setIsLogin] = React.useState(initialMode === 'login');
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  // Atualiza o estado isLogin quando initialMode mudar
+  React.useEffect(() => {
+    setIsLogin(initialMode === 'login');
+  }, [initialMode]);
   
   // Define o esquema baseado no tipo de usuário e se é login ou registro
   const getSchema = () => {
@@ -122,15 +136,32 @@ const AuthForm = ({ userType, isOpen, onClose, onSubmit }: AuthFormProps) => {
   const handleSubmit = async (data: any) => {
     try {
       if (isLogin) {
-        const result = await signIn(data.email, data.password, userType);
+        const result = await signIn(
+          data.email,
+          data.password,
+          userType
+        );
         if (!result.error) {
           if (onSubmit) onSubmit(data);
+           
+          // Redirecionamento após login bem-sucedido
+          redirectToUserDashboard(userType);
         }
       } else {
-        const { error } = await signUp(data.email, data.password, userType, data);
+        // Usar a opção autoLogin como true
+        const { error } = await signUp(
+          data.email, 
+          data.password, 
+          userType, 
+          data, 
+          true  // autoLogin = true
+        );
+        
         if (!error) {
           onClose();
           if (onSubmit) onSubmit(data);
+          
+          // O redirecionamento ocorre automaticamente após o login
         }
       }
     } catch (error: any) {
@@ -141,200 +172,191 @@ const AuthForm = ({ userType, isOpen, onClose, onSubmit }: AuthFormProps) => {
       });
     }
   };
+  
+  // Função para redirecionar para o dashboard correspondente
+  const redirectToUserDashboard = (profileType: ProfileType) => {
+    const redirectMap = {
+      "talent": "/jovem",
+      "hr": "/rh",
+      "manager": "/gestor"
+    };
+    
+    navigate(redirectMap[profileType]);
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{
-            userType === "talent"
-              ? "Área do Jovem Talento"
-              : userType === "hr"
-              ? "Área do Profissional de RH"
-              : "Área do Gestor"
-          }</DialogTitle>
-          <DialogDescription>{
-            userType === "talent"
-              ? isLogin
-                ? "Entre para acompanhar seus projetos e feedbacks."
-                : "Crie sua conta para começar a mostrar seu talento."
-              : userType === "hr"
-              ? isLogin
-                ? "Entre para avaliar e fornecer feedback aos jovens talentos."
-                : "Crie sua conta para começar a avaliar projetos."
-              : isLogin
-              ? "Entre para buscar novos talentos para sua empresa."
-              : "Crie sua conta para começar a buscar talentos."
-          }</DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {/* Campos comuns para todos os tipos de usuário */}
-            {!isLogin && (
+    <>
+      {isOpen ? (
+        <div className="space-y-4">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              {/* Campos comuns para todos os tipos de usuário */}
+              {!isLogin && (
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome Completo</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Seu nome completo" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
-                name="fullName"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome Completo</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Seu nome completo" {...field} />
+                      <Input type="email" placeholder="seu.email@exemplo.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            )}
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="seu.email@exemplo.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Senha</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Campos específicos para cada tipo de usuário (apenas mostrados durante o registro) */}
+              {!isLogin && userType === "talent" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="interestArea"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Área de Interesse</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Design, Programação, Marketing" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="portfolioLink"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Link de Portfólio/Vídeo</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://..." {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Link para seu portfólio, LinkedIn ou vídeo de apresentação
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
               )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Senha</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              {!isLogin && userType === "hr" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="company"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Empresa</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Nome da empresa" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="cnpj"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CNPJ</FormLabel>
+                        <FormControl>
+                          <Input placeholder="XX.XXX.XXX/XXXX-XX" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
               )}
-            />
-            {/* Campos específicos para cada tipo de usuário (apenas mostrados durante o registro) */}
-            {!isLogin && userType === "talent" && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="interestArea"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Área de Interesse</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Ex: Design, Programação, Marketing" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="portfolioLink"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Link de Portfólio/Vídeo</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://..." {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Link para seu portfólio, LinkedIn ou vídeo de apresentação
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-            {!isLogin && userType === "hr" && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="company"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Empresa</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nome da empresa" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cnpj"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>CNPJ</FormLabel>
-                      <FormControl>
-                        <Input placeholder="XX.XXX.XXX/XXXX-XX" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-            {!isLogin && userType === "manager" && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="company"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Empresa</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nome da empresa" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="position"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cargo</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Seu cargo na empresa" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="talentSearchArea"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Área de Busca de Talentos</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Ex: Design, Programação, Marketing" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-            <div className="flex flex-col space-y-2">
-              <Button type="submit" className="w-full">
-                {isLogin ? "Entrar" : "Cadastrar"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => setIsLogin(!isLogin)}
-              >
-                {isLogin ? "Criar uma conta" : "Já tenho uma conta"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+              {!isLogin && userType === "manager" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="company"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Empresa</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Nome da empresa" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="position"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cargo</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Seu cargo na empresa" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="talentSearchArea"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Área de Busca de Talentos</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Design, Programação, Marketing" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+              <div className="flex flex-col space-y-2">
+                <Button type="submit" className="w-full">
+                  {isLogin ? "Entrar" : "Cadastrar"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  {isLogin ? "Criar uma conta" : "Já tenho uma conta"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
+      ) : null}
+    </>
   );
 };
 

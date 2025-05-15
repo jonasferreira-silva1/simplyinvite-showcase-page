@@ -49,24 +49,33 @@ const UserPanelLayout = ({
   userImage,
 }: UserPanelLayoutProps) => {
   const location = useLocation();
-  const { user, profileType, getProfile, signOut, setUser, setProfileType } =
-    useAuth();
+  const { user, profile, profileType, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>(providedUserName || "");
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   useEffect(() => {
-    const loadProfileData = async () => {
-      if (user) {
-        const { data } = await getProfile();
-        if (data && data.full_name) {
-          setUserName(data.full_name);
-        }
-        setLoading(false);
-      }
-    };
+    // Definir um tempo limite para o carregamento
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
 
-    loadProfileData();
-  }, [user, getProfile]);
+    // Só busque os dados do perfil se eles ainda não estiverem carregados
+    if (user && profile) {
+      if (profile.name) {
+        setUserName(profile.name);
+      } else if (profile.full_name) {
+        setUserName(profile.full_name);
+      }
+      setLoading(false);
+      setProfileLoaded(true);
+    } else if (user && !profileLoaded) {
+      setUserName(user.email.split('@')[0]);
+      setLoading(false);
+    }
+
+    return () => clearTimeout(timer);
+  }, [user, profile, profileLoaded]);
 
   const getUserInitials = () => {
     return userName
