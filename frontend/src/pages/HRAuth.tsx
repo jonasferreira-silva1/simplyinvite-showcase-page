@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "@/components/auth/AuthForm";
-import { isSupabaseConfigured } from "@/backend/database/supabase";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 const HRAuth = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(true);
   const navigate = useNavigate();
-  const showDevMode = import.meta.env.DEV && !isSupabaseConfigured();
+  const showDevMode = import.meta.env.DEV;
 
   const handleClose = () => {
     setIsAuthOpen(false);

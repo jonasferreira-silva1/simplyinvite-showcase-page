@@ -13,6 +13,19 @@ services:
     networks:
       - app-network
 
+  # Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+    command: npm run dev
+    networks:
+      - app-network
+
   # PostgreSQL Database
   postgres:
     image: postgres:15
