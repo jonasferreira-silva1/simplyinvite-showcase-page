@@ -4,10 +4,10 @@ services:
   # Frontend
   frontend:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8080:80"
     environment:
       - NODE_ENV=production
     networks:
