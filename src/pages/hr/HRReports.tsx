@@ -122,13 +122,7 @@ const HRReports = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="h-80">
-              <ChartContainer
-                config={{
-                  "Ouro": { color: "#FFCD29" },
-                  "Prata": { color: "#BFBFBF" },
-                  "Bronze": { color: "#B87333" }
-                }}
-              >
+              <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={medalData}
@@ -145,9 +139,9 @@ const HRReports = () => {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Tooltip />
                 </PieChart>
-              </ChartContainer>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
@@ -176,10 +170,10 @@ const HRReports = () => {
           </CardHeader>
           <CardContent className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={yearlyData}>
+              <LineChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
-                <YAxis />
+                <YAxis domain={['dataMin - 10', 'dataMax + 10']} />
                 <Tooltip />
                 <Legend />
                 <Line 

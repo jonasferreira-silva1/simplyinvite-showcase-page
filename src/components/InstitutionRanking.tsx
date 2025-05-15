@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Table, 
@@ -318,36 +317,28 @@ const InstitutionRanking = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
-                <div className="h-[400px] w-full flex flex-col items-center justify-center">
-                  <ChartContainer 
-                    config={{
-                      "Públicas": { color: "#9b87f5" },
-                      "Privadas": { color: "#0EA5E9" }
-                    }}
-                  >
+                <div className="h-[400px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={pieChartData}
                         cx="50%"
                         cy="50%"
-                        labelLine={false}
+                        labelLine={true}
                         outerRadius={150}
                         fill="#8884d8"
                         dataKey="value"
+                        nameKey="name"
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       >
                         {pieChartData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                       </Pie>
-                      <ChartTooltip 
-                        content={
-                          <ChartTooltipContent />
-                        }
-                      />
+                      <Tooltip />
                       <Legend />
                     </PieChart>
-                  </ChartContainer>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -363,24 +354,12 @@ const InstitutionRanking = () => {
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="h-[400px] w-full">
-                  <ChartContainer 
-                    config={{
-                      "UFPE": { color: "#9b87f5" },
-                      "UNINASSAU": { color: "#0EA5E9" },
-                      "Universidade Católica de Pernambuco": { color: "#F97316" },
-                      "IFPE": { color: "#D946EF" },
-                      "UPE": { color: "#8B5CF6" }
-                    }}
-                  >
-                    <LineChart data={lineChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={lineChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="year" />
                       <YAxis label={{ value: 'Contratações', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }} />
-                      <ChartTooltip 
-                        content={
-                          <ChartTooltipContent />
-                        }
-                      />
+                      <Tooltip />
                       <Legend />
                       {top5Institutions.map((inst, index) => (
                         <Line 
@@ -392,7 +371,7 @@ const InstitutionRanking = () => {
                         />
                       ))}
                     </LineChart>
-                  </ChartContainer>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>

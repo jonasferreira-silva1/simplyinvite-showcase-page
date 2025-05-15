@@ -3,7 +3,7 @@ import { toast as sonnerToast } from "sonner";
 
 export type ToastVariant = "default" | "destructive";
 
-export interface ToastActionElement extends React.ReactNode {
+export interface ToastActionElement {
   altText?: string;
 }
 
