@@ -1,12 +1,11 @@
-FROM node:20-alpine
-
+FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-
+FROM openjdk:17-slim
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 3001
-
-CMD ["npm", "run", "dev"]
+ENTRYPOINT ["java", "-jar", "app.jar"] 
