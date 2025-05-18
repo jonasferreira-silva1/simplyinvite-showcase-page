@@ -1,11 +1,8 @@
-FROM maven:3.8.4-openjdk-17-slim AS build
+# filepath: simplyinvite-showcase-page/backend/Dockerfile
+FROM node:20-alpine
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
-
-FROM openjdk:17-slim
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+COPY package*.json ./
+RUN npm install
+COPY . .
 EXPOSE 3001
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+CMD ["npm", "run", "dev"]

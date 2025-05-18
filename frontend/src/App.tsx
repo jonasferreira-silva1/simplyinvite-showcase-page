@@ -51,6 +51,14 @@ import ManagerCompany from "@/pages/manager/ManagerCompany";
 // Página inicial
 import Index from "@/pages/Index";
 
+// Importando componentes reais para Jovem Talento
+import TalentProgress from "@/pages/talent/TalentProgress"; // Componente para Minha Evolução
+import TalentInvitations from "@/pages/talent/TalentInvitations"; // Componente para Convites
+
+// Importando componentes para Notificações e Configurações
+import NotificacoesPage from "@/pages/NotificacoesPage"; // Componente placeholder
+import ConfiguracoesPage from "@/pages/ConfiguracoesPage"; // Componente placeholder
+
 const App = () => {
   return (
     <Router>
@@ -106,6 +114,42 @@ const App = () => {
             }
           />
 
+          {/* Rotas para Minha Evolução e Convites (usando componentes reais) */}
+          <Route
+            path="/jovem/evolucao"
+            element={
+              <ProtectedRoute requiredProfileType="talent">
+                <TalentProgress />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jovem/convites"
+            element={
+              <ProtectedRoute requiredProfileType="talent">
+                <TalentInvitations />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rotas para Notificações e Configurações (placeholder) */}
+          <Route
+            path="/jovem/notificacoes"
+            element={
+              <ProtectedRoute requiredProfileType="talent">
+                <NotificacoesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jovem/configuracoes"
+            element={
+              <ProtectedRoute requiredProfileType="talent">
+                <ConfiguracoesPage />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Rotas do RH */}
           <Route
             path="/rh"
@@ -155,6 +199,22 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/rh/notificacoes"
+            element={
+              <ProtectedRoute requiredProfileType="hr">
+                <NotificacoesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rh/configuracoes"
+            element={
+              <ProtectedRoute requiredProfileType="hr">
+                <ConfiguracoesPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Rotas do Gestor */}
           <Route
@@ -194,6 +254,22 @@ const App = () => {
             element={
               <ProtectedRoute requiredProfileType="manager">
                 <ManagerCompany />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gestor/notificacoes"
+            element={
+              <ProtectedRoute requiredProfileType="manager">
+                <NotificacoesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gestor/configuracoes"
+            element={
+              <ProtectedRoute requiredProfileType="manager">
+                <ConfiguracoesPage />
               </ProtectedRoute>
             }
           />

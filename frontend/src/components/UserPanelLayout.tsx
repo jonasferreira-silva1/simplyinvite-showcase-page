@@ -254,7 +254,7 @@ const UserPanelLayout = ({
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Notificações">
-                    <Link to="#">
+                    <Link to={`/${userType}/notificacoes`}>
                       <Bell className="h-4 w-4" />
                       <span>Notificações</span>
                     </Link>
@@ -263,7 +263,7 @@ const UserPanelLayout = ({
 
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip="Configurações">
-                    <Link to="#">
+                    <Link to={`/${userType}/configuracoes`}>
                       <Settings className="h-4 w-4" />
                       <span>Configurações</span>
                     </Link>
